@@ -1,0 +1,113 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(to top, var(--color-red-600), var(--color-red-500)); 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+  z-index: 999;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+.logo img {
+  height: 45px;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.user span {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.user img {
+  width: 45px;
+  height: 45px;
+  border-radius: 10px;
+  margin-left: 20px;
+}
+
+.options {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 20px 15px;
+  display: block;
+}
+
+.option-head {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.option-head img {
+  margin: 0;
+  width: 50px;
+  height: 50px;
+}
+
+.option-info {
+  margin-left: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.option-info > span:first-child {
+  font-weight: 500;
+  font-size: 1rem;
+  text-wrap: nowrap;
+  color: var(--text-color-1)
+}
+
+.option-info > span:last-child {
+  color: var(--text-color-3);
+  font-size: 0.8rem;
+}
+
+.option-head, .option-links {
+  padding: 0px 10px;
+}
+
+/* .user:hover .options {
+  display: block;
+} */
+
+.options hr {
+  margin: 0;
+}
+
+.option-links {
+  margin-top: 20px;
+}
+
+.option-links a {
+  display: block;
+  color: #333;
+  text-decoration: none;
+  padding: 7px 20px;
+}
+
+.option-links a:hover {
+  background-color: var(--color-gray-100);
+  border-radius: 8px;
+  color: var(--color-red-400);
+}

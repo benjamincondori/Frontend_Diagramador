@@ -1,0 +1,79 @@
+<div class="content-wrapper">
+  <div class="container-head">
+    <h1 class="title">Configuración</h1>
+    <!-- <button class="custom-button">Nuevo proyecto</button> -->
+  </div>
+
+  <div class="container-body">
+    <div class="content-profile">
+      <div class="profile-title">Detalles del perfil</div>
+      <div class="profile-details">
+        <form class="profile-form">
+          <div class="form-img">
+            <input type="file" id="image-input" accept="image/*">
+            <div class="image-upload">
+              <label for="image-input">
+                <figure class="image-preview">
+                  <img id="image-preview" src="./assets/images/user_profile_square.png" alt="Preview">
+                </figure>
+              </label>
+              <div class="delete-icon">
+                <i class="fas fa-times"></i>
+              </div>
+            </div>
+          </div>
+          <div class="form-data">
+            <div class="form-group">
+              <label for="name">Nombre:</label>
+              <input class="custom-input" type="text" id="name" name="name" />
+            </div>
+
+            <div class="form-group">
+              <label for="lastname">Apellido:</label>
+              <input
+                class="custom-input"
+                type="text"
+                id="lastname"
+                name="lastname"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="email">Correo electrónico:</label>
+              <input
+                class="custom-input"
+                type="email"
+                id="email"
+                name="email"
+              />
+            </div>
+
+            <div class="form-group justify-content-start">
+              <label for="gender">Genero:</label>
+              <div class="content-radio">
+                <label class="custom-radio">Femenino
+                  <input type="radio" name="radio">
+                  <span class="checkmark"></span>
+                </label>
+                
+                <label class="custom-radio">Masculino
+                  <input type="radio" name="radio">
+                  <span class="checkmark"></span>
+                </label>
+                
+                <label class="custom-radio">No especificado
+                  <input type="radio" name="radio" checked>
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+            </div>
+
+            <div class="align-end">
+              <button class="custom-button" type="submit">Guardar Cambios</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

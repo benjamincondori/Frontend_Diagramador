@@ -1,0 +1,63 @@
+<div class="content-wrapper">
+  <div class="container-head">
+    <h1 class="title">Mis Proyectos</h1>
+    <button (click)="openModal()" class="custom-button">Nuevo proyecto</button>
+  </div>
+  
+  <app-modal></app-modal>
+
+  <div class="container-body">
+    <div class="search-container">
+      <input
+        type="text"
+        class="custom-input input-search"
+        placeholder="Escribe algo..."
+      />
+      <input type="date" class="custom-input" />
+    </div>
+
+        
+    <div #card class="cards-container">
+      <div
+        class="card"
+        *ngFor="
+          let project of projects
+            | paginate : { itemsPerPage: limit, currentPage: page };
+          let i = index
+        "
+      >
+        <button
+          #button
+          (click)="toggleOptions(i)"
+          [ngClass]="{ 'btn-focus':showOptions && openCardIndex === i }"
+          class="card-menu-btn"
+        >
+          <i class="fas fa-ellipsis-v"></i>
+        </button>
+        <img src="./assets/images/img_card_4.svg" alt="Imagen del card" />
+        <div class="card-body">
+          <h3 (click)="goToGrapher()" class="card-title">{{ project.name }}</h3>
+          <p class="card-description">{{ project.description }}</p>
+          <p class="card-date">{{ project.date }}</p>
+        </div>
+        <div
+          #options
+          class="card-menu"
+          [ngClass]="{ open: showOptions && openCardIndex === i }"
+        >
+          <button (click)="editProject()" class="opt-edit">Editar</button>
+          <button (click)="deleteProject()" class="opt-delete">Eliminar</button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="projects.length > 0" class="pagination-container">
+      <pagination-controls
+        class="custom-pagination"
+        (pageChange)="page = $event"
+        previousLabel="Anterior"
+        nextLabel="Siguiente"
+      ></pagination-controls>
+    </div>
+  </div>
+</div>

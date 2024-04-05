@@ -1,0 +1,19 @@
+<div class="modal" [ngStyle]="{ display: isOpen ? 'block' : 'none' }">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Link De Invitación</h2>
+      <span class="close" (click)="closeModal()">&times;</span>
+    </div>
+    <div class="modal-body">
+      <div class="content-text">
+        <p>Copia el enlace y compártelo</p>
+      </div>
+      <div class="content-link">
+        <input value="link.shareUrl" type="text" readonly>
+        <span><img (click)="copyLink()" [src]="iconLink" alt="icon-clipboard"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+

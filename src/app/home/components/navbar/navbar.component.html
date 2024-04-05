@@ -1,0 +1,32 @@
+<div class="navbar px-80">
+  <div class="logo">
+    <img src="./assets/media/logos/default-dark.svg" alt="Logo" />
+  </div>
+  <div class="user">
+    <span>Benjamin Condori Vasquez</span>
+    <img
+      #avatar
+      (click)="toggleOptions()"
+      src="./assets/images/user_profile.png"
+      alt="Usuario"
+    />
+    <div #options class="options" *ngIf="showOptions">
+      <div class="option-head">
+        <img src="./assets/images/user_profile.png" alt="Logo" />
+        <div class="option-info">
+          <span>Benjamin Condori Vasquez</span>
+          <span>benjamincondori7@gmail.com</span>
+        </div>
+      </div>
+      <hr />
+      <div class="option-links">
+        <a class="mb-5" (click)="hideOptions()" routerLink="/home">Home</a>
+        <a class="mb-5" (click)="hideOptions()" routerLink="/home">Mi perfil</a>
+        <a class="mb-5" (click)="hideOptions()" routerLink="/home/settings"
+          >Configuración</a
+        >
+        <a routerLink="/home" (click)="hideOptions()">Salir</a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,34 @@
+<div class="modal" [ngStyle]="{ display: isOpen ? 'block' : 'none' }">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Crear Nuevo Proyecto</h2>
+      <span class="close" (click)="closeModal()">&times;</span>
+    </div>
+    <div class="modal-body">
+      <div class="form-content">
+        <label for="name">Nombre del proyecto:</label>
+        <input
+          class="custom-input"
+          type="text"
+          id="name"
+          placeholder="Ingrese un nombre"
+        />
+      </div>
+
+      <div class="form-content">
+        <label for="description">Descripción:</label>
+        <textarea
+          class="custom-input"
+          id="description"
+          rows="3"
+          placeholder="Escriba un breve descripción de su proyecto"
+        ></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="custom-button">
+        <i class="fas fa-save mr-5"></i>Guardar
+      </button>
+    </div>
+  </div>
+</div>
