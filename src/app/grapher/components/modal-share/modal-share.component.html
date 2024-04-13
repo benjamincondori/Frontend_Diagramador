@@ -9,7 +9,7 @@
         <p>Copia el enlace y compártelo</p>
       </div>
       <div class="content-link">
-        <input value="link.shareUrl" type="text" readonly>
+        <input [value]="link?.shareUrl" type="text" readonly>
         <span><img (click)="copyLink()" [src]="iconLink" alt="icon-clipboard"></span>
       </div>
     </div>

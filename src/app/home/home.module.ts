@@ -9,6 +9,8 @@ import { HomeLayoutComponent } from './pages/home-layout/home-layout.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
 import { ModalComponent } from './components/modal/modal.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { SharedModule } from '../shared/shared.module';
 
 
 @NgModule({
@@ -23,7 +25,9 @@ import { ModalComponent } from './components/modal/modal.component';
   imports: [
     CommonModule,
     NgxPaginationModule,
-    HomeRoutingModule
+    HomeRoutingModule,
+    ReactiveFormsModule,
+    SharedModule,
   ]
 })
 export class HomeModule { }

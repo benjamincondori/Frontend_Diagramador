@@ -1,39 +1,81 @@
 <div class="container-auth">
-  <div class="circle" [@circleAnimation] ></div>
+  <div class="circle" [@circleAnimation]></div>
   <div class="forms-container">
     <div class="signin-signup">
       <!-- Registration Form -->
-      <form action="#" [@slideIn] class="sign-up-form" autocomplete="off">
+      <form
+        [formGroup]="registerForm"
+        (ngSubmit)="register()"
+        [@slideIn]
+        class="sign-up-form"
+        autocomplete="off"
+      >
         <h2 class="title">Registrarse</h2>
         <div class="input-field">
           <i class="fas fa-user"></i>
-          <input type="text" placeholder="Nombre" />
+          <input formControlName="name" type="text" placeholder="Nombre" />
         </div>
+        <span *ngIf="isValidField('name')" class="text-danger">
+          {{ getMessageError('name') }}
+        </span>
+        
         <div class="input-field">
           <i class="fas fa-user"></i>
-          <input type="text" placeholder="Apellido" />
+          <input
+            formControlName="lastname"
+            type="text"
+            placeholder="Apellido"
+          />
         </div>
+        <span *ngIf="isValidField('lastname')" class="text-danger">
+          {{ getMessageError('lastname') }}
+        </span>
+        
         <div class="input-field">
           <i class="fas fa-envelope"></i>
-          <input type="email" placeholder="Correo electrónico" />
+          <input
+            formControlName="email"
+            type="email"
+            placeholder="Correo electrónico"
+          />
         </div>
+        <span *ngIf="isValidField('email')" class="text-danger">
+          {{ getMessageError('email') }}
+        </span>
+        
         <div class="input-field">
           <i class="fas fa-lock"></i>
-          <input type="password" placeholder="Contraseña" />
+          <input
+            formControlName="password"
+            type="password"
+            placeholder="Contraseña"
+          />
         </div>
+        <span *ngIf="isValidField('password')" class="text-danger">
+          {{ getMessageError('password') }}
+        </span>
+        
         <button type="submit" class="btn-custom">Resgistrarse</button>
       </form>
     </div>
   </div>
 
   <div class="panels-container">
-    <div [@slideIn]  class="panel right-panel">
+    <div [@slideIn] class="panel right-panel">
       <div class="content">
         <h3>¿Ya eres parte de nosotros?</h3>
         <p>
-          ¡Qué alegría verte de nuevo! Si ya tienes una cuenta con nosotros, puedes iniciar sesión para acceder a todas las funciones y servicios que ofrecemos. 
+          ¡Qué alegría verte de nuevo! Si ya tienes una cuenta con nosotros,
+          puedes iniciar sesión para acceder a todas las funciones y servicios
+          que ofrecemos.
         </p>
-        <button routerLink="/auth/login" class="btn-custom transparent" id="sign-in-btn">Iniciar sesión</button>
+        <button
+          routerLink="/auth/login"
+          class="btn-custom transparent"
+          id="sign-in-btn"
+        >
+          Iniciar sesión
+        </button>
       </div>
       <img src="./assets/images/img_4.svg" class="image" alt="" />
     </div>

@@ -5,6 +5,9 @@ import { GrapherRoutingModule } from './grapher-routing.module';
 import { GrapherPageComponent } from './pages/grapher-page/grapher-page.component';
 import { ModalShareComponent } from './components/modal-share/modal-share.component';
 
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { SharedModule } from '../shared/shared.module';
+
 
 @NgModule({
   declarations: [
@@ -13,7 +16,9 @@ import { ModalShareComponent } from './components/modal-share/modal-share.compon
   ],
   imports: [
     CommonModule,
-    GrapherRoutingModule
+    GrapherRoutingModule,
+    DragDropModule,
+    SharedModule,
   ]
 })
 export class GrapherModule { }

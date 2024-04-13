@@ -17,53 +17,68 @@
       </button>
     </div>
   </div>
-  
+
   <app-modal-share></app-modal-share>
-  
+  <!-- <app-input-modal></app-input-modal> -->
+
   <div class="content">
     <div class="sidebar">
       <div class="user-avatar active">
-        <img src="./assets/images/avatars/300-1.jpg" alt="avatar-1">
+        <img src="./assets/images/avatars/300-1.jpg" alt="avatar-1" />
       </div>
       <div class="user-avatar active">
-        <img src="./assets/images/avatars/300-2.jpg" alt="avatar-2">
+        <img src="./assets/images/avatars/300-2.jpg" alt="avatar-2" />
       </div>
       <div class="user-avatar active">
-        <img src="./assets/images/avatars/300-3.jpg" alt="avatar-3">
+        <img src="./assets/images/avatars/300-3.jpg" alt="avatar-3" />
       </div>
       <div class="user-avatar active">
-        <img src="./assets/images/avatars/300-4.jpg" alt="avatar-4">
+        <img src="./assets/images/avatars/300-4.jpg" alt="avatar-4" />
       </div>
       <div class="user-avatar active">
-        <img src="./assets/images/avatars/300-5.jpg" alt="avatar-5">
+        <img src="./assets/images/avatars/300-5.jpg" alt="avatar-5" />
       </div>
     </div>
     <div class="canvas">
-      <div class="drawing-area"></div>
+      <!-- <div class="drawing-area">
+        {{ project | json }}
+      </div> -->
+      <canvas #canvasRef id="canvas" width="1100" height="600" ></canvas>
     </div>
     <div class="shapes">
-      <button class="shape" data-name="User">
-        <img src="./assets/images/ic_user_dark.png" alt="icon-user">
+      <button class="shape" data-name="User" (click)="addActor()" >
+        <img src="./assets/images/ic_user_dark.png" alt="icon-user" />
       </button>
-      <button class="shape" data-name="Interface">
-        <img src="./assets/images/ic_interface_dark.png" alt="icon-interface">
+      <button class="shape" data-name="Interface" (click)="addClassElement()" >
+        <img src="./assets/images/ic_interface_dark.png" alt="icon-interface" />
       </button>
-      <button class="shape" data-name="Control">
-        <img src="./assets/images/ic_control_dark.png" alt="icon-control">
+      <button class="shape" data-name="Control" (click)="addClassElement()">
+        <img src="./assets/images/ic_control_dark.png" alt="icon-control" />
       </button>
-      <button class="shape" data-name="Entity">
-        <img src="./assets/images/ic_entity_dark.png" alt="icon-entity">
+      <button class="shape" data-name="Entity" (click)="addClassElement()">
+        <img src="./assets/images/ic_entity_dark.png" alt="icon-entity" />
       </button>
-      <button class="shape" data-name="Loop">
-        <img class="img-small" src="./assets/images/ic_loop_dark.png" alt="icon-loop">
+      <button class="shape" data-name="Loop" (click)="addLoop()">
+        <img
+          class="img-small"
+          src="./assets/images/ic_loop_dark.png"
+          alt="icon-loop"
+        />
       </button>
-      <button class="shape" data-name="Conditional">
-        <img class="img-small" src="./assets/images/ic_conditional_dark.png" alt="icon-conditional">
+      <button class="shape" data-name="Conditional" (click)="addAlt()">
+        <img
+          class="img-small"
+          src="./assets/images/ic_conditional_dark.png"
+          alt="icon-conditional"
+        />
       </button>
-      <button class="shape" data-name="Message">
-        <img class="img-small" src="./assets/images/ic_message_dark.png" alt="icon-message">
+      <button class="shape" data-name="Message" (click)="addMessage()">
+        <img
+          class="img-small"
+          src="./assets/images/ic_message_dark.png"
+          alt="icon-message"
+        />
       </button>
     </div>
   </div>
-  
 </div>

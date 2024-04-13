@@ -8,24 +8,45 @@
     <div class="content-profile">
       <div class="profile-title">Detalles del perfil</div>
       <div class="profile-details">
-        <form class="profile-form">
+        <form
+          [formGroup]="settingsForm"
+          (ngSubmit)="onSubmit()"
+          class="profile-form"
+        >
           <div class="form-img">
-            <input type="file" id="image-input" accept="image/*">
+            <input
+              formControlName="file"
+              (change)="onFileChange($event)"
+              type="file"
+              id="image-input"
+              accept="image/*"
+            />
             <div class="image-upload">
               <label for="image-input">
                 <figure class="image-preview">
-                  <img id="image-preview" src="./assets/images/user_profile_square.png" alt="Preview">
+                  <img id="image-preview" [src]="imagePreview" alt="Preview" />
                 </figure>
               </label>
               <div class="delete-icon">
                 <i class="fas fa-times"></i>
               </div>
             </div>
+            <span *ngIf="isValidField('file')" class="text-danger">
+              {{ getMessageError("file") }}
+            </span>
           </div>
+
           <div class="form-data">
             <div class="form-group">
               <label for="name">Nombre:</label>
-              <input class="custom-input" type="text" id="name" name="name" />
+              <input
+                class="custom-input"
+                type="text"
+                id="name"
+                name="name"
+                [value]="currentUser()?.name"
+                readonly
+              />
             </div>
 
             <div class="form-group">
@@ -35,6 +56,8 @@
                 type="text"
                 id="lastname"
                 name="lastname"
+                [value]="currentUser()?.lastName"
+                readonly
               />
             </div>
 
@@ -45,31 +68,56 @@
                 type="email"
                 id="email"
                 name="email"
+                [value]="currentUser()?.email"
+                readonly
               />
             </div>
 
             <div class="form-group justify-content-start">
               <label for="gender">Genero:</label>
               <div class="content-radio">
-                <label class="custom-radio">Femenino
-                  <input type="radio" name="radio">
+                <label class="custom-radio"
+                  >Femenino
+                  <input
+                    formControlName="gender"
+                    value="Femenino"
+                    type="radio"
+                    name="gender"
+                  />
                   <span class="checkmark"></span>
                 </label>
-                
-                <label class="custom-radio">Masculino
-                  <input type="radio" name="radio">
+
+                <label class="custom-radio"
+                  >Masculino
+                  <input
+                    formControlName="gender"
+                    value="Masculino"
+                    type="radio"
+                    name="gender"
+                  />
                   <span class="checkmark"></span>
                 </label>
-                
-                <label class="custom-radio">No especificado
-                  <input type="radio" name="radio" checked>
+
+                <label class="custom-radio"
+                  >No especificado
+                  <input
+                    formControlName="gender"
+                    value="No especificado"
+                    type="radio"
+                    name="gender"
+                  />
                   <span class="checkmark"></span>
                 </label>
               </div>
             </div>
+            <span *ngIf="isValidField('gender')" class="text-danger">
+              {{ getMessageError("gender") }}
+            </span>
 
             <div class="align-end">
-              <button class="custom-button" type="submit">Guardar Cambios</button>
+              <button class="custom-button" [disabled]="loading" type="submit">
+                {{ loading ? 'Procesando...' : 'Guardar Cambios' }}
+              </button>
             </div>
           </div>
         </form>

@@ -8,6 +8,7 @@
 
 html {
   height: 100%;
+  background-color: var(--color-red-50);
 }
 
 html,
@@ -382,6 +383,11 @@ button {
 .custom-button:hover {
   background-color: #2884EF;
 }
+.custom-button:disabled {
+  background-color: #9ab1cb;
+  /* background-color: #3E97FF; */
+  cursor: not-allowed;
+}
 
 .btn-gray {
   background-color: #555;
@@ -425,6 +431,16 @@ button {
 
 /* STYLES GLOBALS */
 
+.text-danger {
+  color: red; 
+  font-size: 0.85rem;
+  text-align: left;
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 5px;
+  margin-top: -5px;
+}
+
 .px-70 {
   padding-left: 70px;
   padding-right: 70px;
@@ -445,6 +461,12 @@ button {
 }
 .mt-10 {
   margin-top: 10px;
+}
+.mb-15 {
+  margin-bottom: 15px;
+}
+.mt-15 {
+  margin-top: 15px;
 }
 .ml-10 {
   margin-left: 10px;

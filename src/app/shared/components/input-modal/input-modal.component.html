@@ -1,0 +1,31 @@
+<div class="modal" [ngStyle]="{ display: isOpen ? 'block' : 'none' }">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Ingrese</h2>
+      <span class="close" (click)="closeModal()">&times;</span>
+    </div>
+    <form [formGroup]="inputForm" (ngSubmit)="onSubmit()">
+      <div class="modal-body">
+        <div class="form-content">
+          <label for="name">Ingrese un nombre:</label>
+          <input
+            formControlName="name"
+            class="custom-input"
+            type="text"
+            id="name"
+            placeholder="Ingrese un nombre"
+          />
+        </div>
+        <span *ngIf="isValidField('name')" class="form-text text-danger">
+          {{ getMessageError('name') }}
+        </span>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="custom-button">
+          <i class="fas fa-save mr-5"></i>
+          Enviar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

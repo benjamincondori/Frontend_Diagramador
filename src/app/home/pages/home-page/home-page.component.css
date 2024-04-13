@@ -179,5 +179,30 @@
 }
 
 
+.no-projects {
+  border: 1px dashed var(--color-gray-500);
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  min-height: 210px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-projects h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--color-gray-600);
+  margin-bottom: 25px;
+}
+
+.no-projects img {
+  width: auto;
+  height: 180px;
+}
+
 
 

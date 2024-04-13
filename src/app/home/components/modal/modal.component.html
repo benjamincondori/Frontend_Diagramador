@@ -1,34 +1,45 @@
 <div class="modal" [ngStyle]="{ display: isOpen ? 'block' : 'none' }">
   <div class="modal-content">
     <div class="modal-header">
-      <h2>Crear Nuevo Proyecto</h2>
+      <h2>{{ isEditing ? 'Editar Proyecto' : 'Crear Nuevo Proyecto' }}</h2>
       <span class="close" (click)="closeModal()">&times;</span>
     </div>
-    <div class="modal-body">
-      <div class="form-content">
-        <label for="name">Nombre del proyecto:</label>
-        <input
-          class="custom-input"
-          type="text"
-          id="name"
-          placeholder="Ingrese un nombre"
-        />
-      </div>
+    <form [formGroup]="projectForm" (ngSubmit)="onSubmit()">
+      <div class="modal-body">
+        <div class="form-content">
+          <label for="name">Nombre del proyecto:</label>
+          <input
+            formControlName="name"
+            class="custom-input"
+            type="text"
+            id="name"
+            placeholder="Ingrese un nombre"
+          />
+        </div>
+        <span *ngIf="isValidField('name')" class="form-text text-danger">
+          {{ getMessageError('name') }}
+        </span>
 
-      <div class="form-content">
-        <label for="description">Descripción:</label>
-        <textarea
-          class="custom-input"
-          id="description"
-          rows="3"
-          placeholder="Escriba un breve descripción de su proyecto"
-        ></textarea>
+        <div class="form-content mt-15">
+          <label for="description">Descripción:</label>
+          <textarea
+            formControlName="description"
+            class="custom-input"
+            id="description"
+            rows="3"
+            placeholder="Escriba un breve descripción de su proyecto"
+          ></textarea>
+        </div>
+        <span *ngIf="isValidField('description')" class="form-text text-danger">
+          {{ getMessageError('description') }}
+        </span>
       </div>
-    </div>
-    <div class="modal-footer">
-      <button class="custom-button">
-        <i class="fas fa-save mr-5"></i>Guardar
-      </button>
-    </div>
+      <div class="modal-footer">
+        <button type="submit" class="custom-button">
+          <i class="fas fa-save mr-5"></i>
+          {{ isEditing ? 'Actualizar' : 'Guardar' }}
+        </button>
+      </div>
+    </form>
   </div>
 </div>
