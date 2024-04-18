@@ -7,12 +7,14 @@ import { ModalShareComponent } from './components/modal-share/modal-share.compon
 
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { SharedModule } from '../shared/shared.module';
+import { ModalSaveComponent } from './components/modal-save/modal-save.component';
 
 
 @NgModule({
   declarations: [
     GrapherPageComponent,
-    ModalShareComponent
+    ModalShareComponent,
+    ModalSaveComponent
   ],
   imports: [
     CommonModule,

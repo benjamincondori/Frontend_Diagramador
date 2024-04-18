@@ -12,4 +12,11 @@ export interface Diagram {
   createdAt:   string;
 }
 
+export interface DiagramUpdateParams {
+  id: number;
+  name?: string;
+  description?: string;
+  data?: string;
+}
+
 

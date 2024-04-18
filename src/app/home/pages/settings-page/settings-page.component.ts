@@ -29,7 +29,6 @@ export class SettingsPageComponent implements OnInit {
   ) {}
   
   ngOnInit(): void {
-    
     this.loadImagePreview();
     const gender = this.currentUser()?.profile.gender;
     

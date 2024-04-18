@@ -1,0 +1,20 @@
+<div class="slider-container">
+  <owl-carousel-o [options]="customOptions">
+    <ng-template carouselSlide *ngFor="let card of cards">
+      <div class="card-container">
+        <div class="card">
+          <img src="./assets/images/img_card_4.svg" alt="Imagen del card" />
+          <div class="card-body">
+            <h3 (click)="goToDiagram(card)" class="card-title">
+              {{ card.name }}
+            </h3>
+            <p class="card-description">{{ card.description }}</p>
+            <p class="card-date">
+              {{ card.createdAt | date : "longDate" : "" : "es-BO" }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </owl-carousel-o>
+</div>

@@ -1,98 +1,92 @@
+import { Lifeline } from "./lifeline.class";
+
 export class Actor {
-  x: number;
-  y: number;
-  ancho: number;
-  alto: number;
-  color: string;
-  arrastrando: boolean;
-  conexion: any[];
+  public x: number;
+  public y: number;
+  private width: number;
+  private height: number;
+  public text: string;
+  public textYPosition: number;
+  public lifeline: Lifeline;
 
-  constructor(private ctx: CanvasRenderingContext2D) {
-    this.x = 0;
-    this.y = 0;
-    this.ancho = 20;
-    this.alto = 0;
-    this.color = "#000000";
-    this.arrastrando = false;
-    this.conexion = [];
-  }
-
-  drawActor(x: number, y: number) {
+  constructor(x: number, y: number, text: string) {
     this.x = x;
     this.y = y;
-
-    this.ctx.beginPath();
-    this.ctx.arc(x, y, 10, 0, 2 * Math.PI);
-    this.ctx.fillStyle = this.color;
-    this.ctx.fill();
-    this.ctx.lineWidth = 2;
-    this.ctx.strokeStyle = this.color;
-    this.ctx.stroke();
-    this.ctx.closePath();
-
-    // Dibujar línea vertical para representar el cuerpo del actor
-		//el torso y pierda
-		this.ctx.beginPath();
-		this.ctx.moveTo(x, y + 12); //100 62
-		this.ctx.lineTo(x, y + 35); //100  85
-		this.ctx.strokeStyle = this.color;
-		this.ctx.stroke();
-		this.ctx.closePath();
-		//sus manos
-		this.ctx.beginPath();
-		this.ctx.moveTo(x - 10, y + 20); //90 70
-		this.ctx.lineTo(x + 10, y + 20); //110 70
-		this.ctx.strokeStyle = this.color;
-		this.ctx.stroke();
-		this.ctx.closePath();
-		// Dibujar las piernas
-		this.ctx.beginPath();
-		this.ctx.moveTo(x, y + 35); //100 85
-		this.ctx.lineTo(x - 10, y + 50); //90 100
-		this.ctx.moveTo(x, y + 35); //100 85
-		this.ctx.lineTo(x + 10, y + 50); // 110  100
-		this.ctx.fillStyle = this.color;
-		this.ctx.fill();
-		this.ctx.lineWidth = 2;
-		this.ctx.strokeStyle = this.color;
-		this.ctx.stroke();
-		this.ctx.closePath();
-
-		this.ctx.font = "10px Arial";
-		this.ctx.fillText("texto", x - 10, y + 60); /// 90 110
-
-		this.ctx.beginPath();
-
-		for (let i = 0; i < 24; i++) {
-			// Puedes ajustar el número de iteraciones según tus necesidades
-			const yCoord = y + 65 + i * 7; //  y=115   Incrementa la coordenada y por 5 en cada iteración
-			this.ctx.moveTo(x, yCoord + 5); // x=100
-			this.ctx.lineTo(x, yCoord + 10);
-			//actorCanvas.Aancho=40;
-			// console.log('alto',(yCoord+10)-actorCanvas.Ay,'ancho',x);
-			//console.log(x)
-			this.alto = yCoord + 10 - this.y;
-		}
-		this.ctx.strokeStyle = this.color;
-		this.ctx.stroke();
-		this.ctx.closePath();
+    this.width = 40;
+    this.height = 70;
+    this.text = text;
+    this.textYPosition = this.x + 70;
+    
+    // Inicializa la línea de vida para que comience desde la posición Y del texto
+    this.lifeline = new Lifeline(
+      this.x,
+      this.textYPosition,
+      200
+    );
   }
 
-  clearActor() {
-    this.ctx.clearRect(this.x, this.y, this.ancho, this.ancho);
+  draw(context: CanvasRenderingContext2D): void {
+    // Dibujar la cabeza
+    context.beginPath();
+    context.arc(this.x, this.y, 10, 0, Math.PI * 2);
+    context.fillStyle = 'black';
+    context.fill();
+    context.closePath();
+
+    // Dibujar el cuerpo
+    context.beginPath();
+    context.moveTo(this.x, this.y + 10);
+    context.lineTo(this.x, this.y + 25);
+    context.strokeStyle = 'black';
+    context.stroke();
+    context.closePath();
+
+    // Dibujar los brazos
+    context.beginPath();
+    context.moveTo(this.x - 10, this.y + 15);
+    context.lineTo(this.x + 10, this.y + 15);
+    context.strokeStyle = 'black';
+    context.stroke();
+    context.closePath();
+
+    // Dibujar las piernas
+    context.beginPath();
+    context.moveTo(this.x, this.y + 23);
+    context.lineTo(this.x - 10, this.y + 40);
+    context.moveTo(this.x, this.y + 23);
+    context.lineTo(this.x + 10, this.y + 40);
+    context.strokeStyle = 'black';
+    context.stroke();
+    context.closePath();
+    
+    // Dibujar el nombre del actor
+    context.font = 'bold 16px Poppins';
+    context.fillStyle = 'black';
+    const textWidth = context.measureText(this.text).width;
+    context.fillText(this.text, this.x - textWidth / 2, this.y + 60);
+    context.closePath();
+    
+    // Línea de vida
+    this.lifeline.x = this.x; 
+    this.lifeline.y = this.textYPosition;
+    this.lifeline.draw(context);
   }
   
-  
-  
-  // Método para dibujar el actor en la posición actualizada
-  draw() {
-    this.drawActor(this.x, this.y);
+  isPointInside(x: number, y: number): boolean {
+    return (
+      x >= this.x &&
+      x <= this.x + this.width &&
+      y >= this.y &&
+      y <= this.y + this.height
+    );
   }
-  
-  // Método para actualizar la posición del actor mientras se arrastra
-  updatePosition(x: number, y: number) {
-    this.x = x - this.x;
-    this.y = y - this.y;
-    this.draw();
+
+  move(dx: number, dy: number): void {
+    this.x += dx;
+    this.y += dy;
+    
+    // Mueve la línea de vida junto con el actor
+    this.lifeline.move(dx, dy);
+    this.textYPosition += dy; // Asegúrate de mover también la posición Y del texto
   }
 }

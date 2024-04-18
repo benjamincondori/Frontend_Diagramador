@@ -9,6 +9,7 @@ export class ModalService {
 
   private showModal: boolean = false;
   private isEditing: boolean = false;
+  private showModalAddCollaborator: boolean = false;
   
   private _editingSubject = new Subject<boolean>();
   public editing = this._editingSubject.asObservable();
@@ -19,6 +20,10 @@ export class ModalService {
   
   get isOpen(): boolean {
     return this.showModal;
+  }
+  
+  get isOpenAddCollaborator(): boolean {
+    return this.showModalAddCollaborator;
   }
   
   get isEdit(): boolean {
@@ -42,9 +47,14 @@ export class ModalService {
     this._editingSubject.next(true);
   }
   
+  openModalAddCollaborator(): void {
+    this.showModalAddCollaborator = true;
+  }
+  
   closeModal(): void {
     this.showModal = false;
     this.isEditing = false;
+    this.showModalAddCollaborator = false;
   }
   
 }

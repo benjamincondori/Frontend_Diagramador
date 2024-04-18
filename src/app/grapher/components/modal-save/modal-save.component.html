@@ -1,0 +1,16 @@
+<div class="modal" [ngStyle]="{ display: showModal ? 'block' : 'none' }">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>¿Desea guardar los cambios?</h2>
+      <span class="close" (click)="closeModal()">&times;</span>
+    </div>
+    <div class="modal-body">
+      <button (click)="save()" class="custom-button ml-10 btn-success">
+        <i class="fa fa-save mr-5"></i>
+        Guardar cambios
+      </button>
+    </div>
+  </div>
+</div>
+
+

@@ -480,7 +480,43 @@ button {
 .ml-5 {
   margin-left: 5px;
 }
+.pt-10 {
+  padding-top: 10px;
+}	
+.pb-10 {
+  padding-bottom: 10px;
+}
+.pr-10 {
+  padding-right: 10px;
+}
+.pl-10 {
+  padding-left: 10px;
+}
+.mt-50 {
+  margin-top: 50px;
+}
 
+/* SLIDER OWL */
 
+.owl-theme .owl-nav [class*=owl-] {
+  font-size: 18px;
+}
 
+.slider-container .owl-next, .slider-container .owl-prev {
+  background-color: var(--color-red-200) !important;
+  width: 50px !important;
+  height: 35px !important;
+}
+
+.slider-container .owl-next:hover, .slider-container .owl-prev:hover {
+  background-color: var(--color-red-600) !important;
+}
+
+.slider-container .owl-carousel .owl-item {
+  max-width: 270px; 
+}
+
+/* .slider-container .owl-carousel .owl-stage {
+  padding: 10px
+} */
 

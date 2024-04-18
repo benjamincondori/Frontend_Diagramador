@@ -4,13 +4,13 @@
   width: 100%;
   min-height: 100vh;
   background-color: var(--color-red-50);
-  padding: 15px 25px 15px 15px;
+  padding: 15px 25px 15px 15px !important;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
-  padding: 10px 100px;
+  padding: 10px 130px 10px 100px;
   height: 70px;
 }
 
@@ -88,8 +88,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 10px;
-  width: 90px;
+  /* padding: 10px; */
+  /* width: 90px; */
+  /* flex-wrap: wrap;
+  justify-content: space-between; */
 }
 
 .shape {
@@ -134,3 +136,8 @@
   font-size: 12px;
   white-space: nowrap; 
 }
+
+/* .cursor-delete {
+  
+} */
+

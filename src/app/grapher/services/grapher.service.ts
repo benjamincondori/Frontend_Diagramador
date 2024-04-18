@@ -12,6 +12,7 @@ export class GrapherService {
   private readonly baseUrl: string = environment.baseUrl;
   
   private showModal: boolean = false;
+  private showModalSave: boolean = false;
   private currentProject?: DiagramResponse;
   
   private _link = new Subject<Link>();
@@ -21,6 +22,10 @@ export class GrapherService {
   
   get isOpen(): boolean {
     return this.showModal;
+  }
+  
+  get isOpenModalSave(): boolean {
+    return this.showModalSave;
   }
   
   get project(): DiagramResponse | undefined {
@@ -34,6 +39,10 @@ export class GrapherService {
   setCurrentProject(project: DiagramResponse): void {
     this.currentProject = project;
     this.generateTokenShare(project.id).subscribe();
+  }
+  
+  setDataCurrentProject(data: string): void {
+    this.currentProject!.data = data;
   }
   
   generateTokenShare(id: number): Observable<Link> {
@@ -53,8 +62,16 @@ export class GrapherService {
     this.showModal = true;
   }
   
+  openModalSave(): void {
+    this.showModalSave = true;
+  }
+  
   closeModal(): void {
     this.showModal = false;
+  }
+  
+  closeModalSave(): void {
+    this.showModalSave = false;
   }
   
 }

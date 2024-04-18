@@ -41,5 +41,14 @@ export class AlertsService {
       timer: 2000,
     });
   }
+  
+  alertInfo(message: string, title?: string): void {
+    Swal.fire({
+      title: title ? title : 'Oops...!',
+      text: message,
+      icon: 'info',
+      timer: 2000,
+    });
+  }
 
 }

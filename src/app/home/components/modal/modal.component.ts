@@ -6,6 +6,7 @@ import { HomeService } from '../../services/home.service';
 import { Router } from '@angular/router';
 import { AlertsService } from 'src/app/shared/services/alerts.service';
 import { DiagramResponse } from '../../interfaces/diagrams-response.interface';
+import { DiagramUpdateParams } from '../../interfaces/diagram.interface';
 
 @Component({
   selector: 'app-modal',
@@ -95,9 +96,13 @@ export class ModalComponent implements OnInit {
   
   updateProject(): void {
     const id = this.project!.id;
-    const { name, description } = this.projectForm.value;
+    
+    const params: DiagramUpdateParams = {
+      id: id,
+      ...this.projectForm.value,
+    }
 
-    this.homeService.updateProject(id, name, description).subscribe({
+    this.homeService.updateProject(params).subscribe({
       next: (resp) => {
         this.modalService.closeModal();
         this.projectForm.reset();
@@ -106,8 +111,6 @@ export class ModalComponent implements OnInit {
         const title = '¡Proyecto actualizado!';
         this.alertsService.alertSuccess(message, title);
         this.homeService.getProjects().subscribe();
-        
-        // this.router.navigateByUrl('/home/diagrams');
       },
       error: (errorMessage) => {
         const message = 'No se pudo actualizar el proyecto.';

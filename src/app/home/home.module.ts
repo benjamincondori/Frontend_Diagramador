@@ -11,6 +11,7 @@ import { FooterComponent } from './components/footer/footer.component';
 import { ModalComponent } from './components/modal/modal.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../shared/shared.module';
+import { ModalAddCollaboratorComponent } from './components/modal-add-collaborator/modal-add-collaborator.component';
 
 
 @NgModule({
@@ -21,6 +22,7 @@ import { SharedModule } from '../shared/shared.module';
     NavbarComponent,
     FooterComponent,
     ModalComponent,
+    ModalAddCollaboratorComponent,
   ],
   imports: [
     CommonModule,

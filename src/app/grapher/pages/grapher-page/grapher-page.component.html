@@ -11,7 +11,7 @@
         <i class="fas fa-share-alt mr-5"></i>
         Compartir
       </button>
-      <button class="custom-button ml-10 btn-success">
+      <button (click)="openModalSave()" class="custom-button ml-10 btn-success">
         <i class="fa fa-save mr-5"></i>
         Guardar
       </button>
@@ -19,7 +19,7 @@
   </div>
 
   <app-modal-share></app-modal-share>
-  <!-- <app-input-modal></app-input-modal> -->
+  <app-modal-save></app-modal-save>
 
   <div class="content">
     <div class="sidebar">
@@ -43,21 +43,23 @@
       <!-- <div class="drawing-area">
         {{ project | json }}
       </div> -->
-      <canvas #canvasRef id="canvas" width="1100" height="600" ></canvas>
+      <canvas #canvasRef id="canvas" [ngClass]="{'cursor-delete': isDeleting}" width="1035" height="600" ></canvas>
     </div>
-    <div class="shapes">
-      <button class="shape" data-name="User" (click)="addActor()" >
+    <div class="shapes pl-10 pt-10 pb-10">
+      <button class="shape" data-name="Actor" (click)="addActor()">
         <img src="./assets/images/ic_user_dark.png" alt="icon-user" />
       </button>
-      <button class="shape" data-name="Interface" (click)="addClassElement()" >
+      <button class="shape" data-name="Interface" (click)="addInterface()">
         <img src="./assets/images/ic_interface_dark.png" alt="icon-interface" />
       </button>
-      <button class="shape" data-name="Control" (click)="addClassElement()">
+      <button class="shape" data-name="Control" (click)="addControl()">
         <img src="./assets/images/ic_control_dark.png" alt="icon-control" />
       </button>
-      <button class="shape" data-name="Entity" (click)="addClassElement()">
+      <button class="shape" data-name="Entity" (click)="addEntity()">
         <img src="./assets/images/ic_entity_dark.png" alt="icon-entity" />
       </button>
+    </div>
+    <div class="shapes pl-10 pt-10 pb-10">
       <button class="shape" data-name="Loop" (click)="addLoop()">
         <img
           class="img-small"
@@ -72,11 +74,30 @@
           alt="icon-conditional"
         />
       </button>
-      <button class="shape" data-name="Message" (click)="addMessage()">
+      <button class="shape" data-name="Right Arrow" (click)="addRightArrow()">
+        <img
+          src="./assets/images/ic_dispatch_dark.png"
+          alt="icon-right-arrow"
+        />
+      </button>
+      <button class="shape" data-name="Left Arrow" (click)="addLeftArrow()">
+        <img
+          src="./assets/images/ic_return_dark.png"
+          alt="icon-left-arrow"
+        />
+      </button>
+      <button class="shape" data-name="Message">
         <img
           class="img-small"
           src="./assets/images/ic_message_dark.png"
           alt="icon-message"
+        />
+      </button>
+      <button class="shape" data-name="Remove" (click)="enableDelete()">
+        <img
+          class="img-small"
+          [src]="isDeleting ? './assets/images/ic_eraser.png' : './assets/images/ic_eraser_dark.png'"
+          alt="icon-remove"
         />
       </button>
     </div>

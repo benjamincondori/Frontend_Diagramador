@@ -21,6 +21,7 @@ export class HomePageComponent implements OnInit {
   copyProjects!: DiagramResponse[];
   searchForm!: FormGroup;
   loadingProjects: boolean = true;
+  loadingCollaborations: boolean = true;
   
   showOptions = false;
   openCardIndex: number = -1;
@@ -39,11 +40,14 @@ export class HomePageComponent implements OnInit {
   
   ngOnInit(): void {
     this.getAllProjects();
+    this.getAllCollaborations();
+    
     this.homeService.projects.subscribe((projects) => { 
       this.projects = projects;
       this.copyProjects = this.projects; 
       setTimeout(() => {
         this.loadingProjects = false;
+        this.loadingCollaborations = false;
       }, 1000)
     });
     
@@ -70,6 +74,10 @@ export class HomePageComponent implements OnInit {
   
   }
   
+  get collaborations(): DiagramResponse[] {
+    return this.homeService.collaborations;
+  }
+  
   // Go to Diagrammer
   goToGrapher(project: DiagramResponse): void {
     this.grapherService.setCurrentProject(project);
@@ -82,6 +90,15 @@ export class HomePageComponent implements OnInit {
       next: (projects) => {
         this.projects = projects;
       },
+      error: (err) => {
+        console.log(err);
+      }
+    });
+  }
+  
+  // Obtener todos los proyectos colaborativos
+  getAllCollaborations() {
+    this.homeService.getCollaborations().subscribe({
       error: (err) => {
         console.log(err);
       }
@@ -199,6 +216,10 @@ export class HomePageComponent implements OnInit {
   
   openModalEdit(project: DiagramResponse): void {
     this.modalService.openModalEdit(project);
+  }
+  
+  openModalAddCollaborator() {
+    this.modalService.openModalAddCollaborator();
   }
   
 }

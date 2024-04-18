@@ -1,0 +1,32 @@
+<div class="modal" [ngStyle]="{ display: isOpen ? 'block' : 'none' }">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Agregarme a un proyecto</h2>
+      <span class="close" (click)="closeModal()">&times;</span>
+    </div>
+    <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+      <div class="modal-body">
+        <div class="form-content">
+          <!-- <label for="token">Token:</label> -->
+          <input
+            formControlName="token"
+            class="custom-input"
+            type="text"
+            id="token"
+            placeholder="Ingrese un token válido"
+          />
+        </div>
+        <span *ngIf="isValidField('token')" class="form-text text-danger">
+          {{ getMessageError('token') }}
+        </span>
+
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="custom-button">
+          <i class="fas fa-save mr-5"></i>
+          Unirme al proyecto
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

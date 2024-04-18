@@ -3,7 +3,7 @@ import { computed, Injectable, OnInit, signal } from '@angular/core';
 import { catchError, Observable, of, Subject, tap, throwError } from 'rxjs';
 import { Profile } from 'src/app/auth/interfaces/register-response.interface';
 import { environment } from 'src/environments/environment';
-import { Diagram } from '../interfaces/diagram.interface';
+import { Diagram, DiagramUpdateParams } from '../interfaces/diagram.interface';
 import { DiagramResponse } from '../interfaces/diagrams-response.interface';
 
 @Injectable({
@@ -16,11 +16,16 @@ export class HomeService implements OnInit {
   private _projectsSubject = new Subject<DiagramResponse[]>();
   public projects = this._projectsSubject.asObservable();
   
+  private myCollaborations?: DiagramResponse[];
 
   constructor(private http: HttpClient) { }
   
   ngOnInit(): void {
     
+  }
+  
+  get collaborations(): DiagramResponse[] {
+    return this.myCollaborations || [];
   }
   
   setProjects(projects: DiagramResponse[]) {
@@ -45,6 +50,34 @@ export class HomeService implements OnInit {
     );
   }
   
+  // Obtener los proyectos colaborativos
+  getCollaborations(): Observable<DiagramResponse[]> {
+    const url = `${this.baseUrl}/drawing/collaborations`;
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+    return this.http.get<DiagramResponse[]>(url, { headers }).pipe(
+      tap((diagrams) => (this.myCollaborations = diagrams)),
+      catchError((err) => {
+        return throwError(() => err);
+      })
+    );
+  }
+  
+  // Valida el token para agregarse a un proyecto como colaborador
+  validateToken(id: string): Observable<any> {
+    const url = `${this.baseUrl}/drawing/validateToken/${id}`;
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+    return this.http.get(url, { headers }).pipe(
+      // tap((res) => console.log(res)),
+      catchError((err) => {
+        return throwError(() => err.error.message);
+      })
+    );
+  }
+  
   // Crear un nuevo proyecto
   createProject(name: string, description: string): Observable<Diagram> {
     const url = `${this.baseUrl}/drawing/create`;
@@ -60,11 +93,12 @@ export class HomeService implements OnInit {
   }
   
   // Actualizar un proyecto
-  updateProject(id: number, name: string, description: string): Observable<any> {
+  updateProject(params: DiagramUpdateParams): Observable<any> {
+    const { id, name, description, data } = params;
     const url = `${this.baseUrl}/drawing/update/${id}`;
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    const body = { name, description };
+    const body = { name, description, data };
     
     return this.http.patch(url, body, { headers }).pipe(
       catchError((err) => {
@@ -87,8 +121,9 @@ export class HomeService implements OnInit {
     );
   }
   
+  
   // Obtener un proyecto por su id
-  getProyect(id: number): Observable<DiagramResponse> {
+  getProject(id: number): Observable<DiagramResponse> {
     const url = `${this.baseUrl}/drawing/${id}`;
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
