@@ -10,6 +10,9 @@
             </h3>
             <p class="card-description">{{ card.description }}</p>
             <p class="card-date">
+              <b>Creado por:</b> {{ card.user.name }} {{ card.user.lastName }}
+            </p>
+            <p class="card-date">
               {{ card.createdAt | date : "longDate" : "" : "es-BO" }}
             </p>
           </div>
