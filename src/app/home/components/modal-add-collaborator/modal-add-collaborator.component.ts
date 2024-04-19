@@ -4,6 +4,9 @@ import { ModalService } from '../../services/modal.service';
 import { ValidatorsService } from 'src/app/shared/services/validators.service';
 import { HomeService } from '../../services/home.service';
 import { AlertsService } from 'src/app/shared/services/alerts.service';
+import { GrapherService } from 'src/app/grapher/services/grapher.service';
+import { Router } from '@angular/router';
+import { DiagramResponse } from '../../interfaces/diagrams-response.interface';
 
 @Component({
   selector: 'app-modal-add-collaborator',
@@ -18,6 +21,8 @@ export class ModalAddCollaboratorComponent implements OnInit {
     private fb: FormBuilder,
     private modalService: ModalService,
     private homeService: HomeService,
+    private grapherService: GrapherService,
+    private router: Router,
     private validatorsService: ValidatorsService,
     private alertsService: AlertsService,
   ) {}
@@ -42,14 +47,16 @@ export class ModalAddCollaboratorComponent implements OnInit {
     if (!token) return;
     
     this.homeService.validateToken(token).subscribe({
-      next: (resp) => {
+      next: (project) => {
         this.closeModal();
         this.myForm.reset();
-        
+        console.log(project);
         const title = '¡Token validado con exito!';
         const message = 'Se ha validado el token con exito, ahora puedes colaborar en el proyecto.';
         this.alertsService.alertSuccess(message, title);
+        
         this.homeService.getCollaborations().subscribe();
+        this.goToGrapher(project);
       },
       error: (errorMessage) => {
         if (errorMessage.includes('User is already a collaborator on this diagram')) {
@@ -63,6 +70,11 @@ export class ModalAddCollaboratorComponent implements OnInit {
         }
       }
     });
+  }
+  
+  goToGrapher(project: DiagramResponse): void {
+    this.grapherService.setCurrentProject(project);
+    this.router.navigate(['/grapher']);
   }
   
   closeModal(): void {

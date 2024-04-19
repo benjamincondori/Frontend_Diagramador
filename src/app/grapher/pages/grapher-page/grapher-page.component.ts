@@ -34,11 +34,6 @@ export class GrapherPageComponent implements OnInit, AfterViewInit {
   private dragOffsetX: number = 0;
   private dragOffsetY: number = 0;
 
-  // private canvasWidth = 1100;
-  // private canvasHeight = 600;
-  // private scrollX = 0;
-  // private scrollY = 0;
-
   constructor(
     private grapherService: GrapherService,
     private alertsService: AlertsService,
@@ -58,8 +53,6 @@ export class GrapherPageComponent implements OnInit, AfterViewInit {
 
   private initCanvas(): void {
     this.canvasRef.nativeElement.style.background = '#fff';
-    // this.canvasRef.nativeElement.width = this.canvasWidth;
-    // this.canvasRef.nativeElement.height = this.canvasHeight;
     this.context = this.canvasRef.nativeElement.getContext('2d');
   }
 

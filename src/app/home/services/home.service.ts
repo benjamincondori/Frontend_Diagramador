@@ -1,10 +1,11 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { computed, Injectable, OnInit, signal } from '@angular/core';
-import { catchError, Observable, of, Subject, tap, throwError } from 'rxjs';
+import { catchError, map, Observable, of, Subject, tap, throwError } from 'rxjs';
 import { Profile } from 'src/app/auth/interfaces/register-response.interface';
 import { environment } from 'src/environments/environment';
 import { Diagram, DiagramUpdateParams } from '../interfaces/diagram.interface';
 import { DiagramResponse } from '../interfaces/diagrams-response.interface';
+import { AddCollaboratorResponse } from '../interfaces/add-collaborator.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -65,13 +66,13 @@ export class HomeService implements OnInit {
   }
   
   // Valida el token para agregarse a un proyecto como colaborador
-  validateToken(id: string): Observable<any> {
+  validateToken(id: string): Observable<DiagramResponse> {
     const url = `${this.baseUrl}/drawing/validateToken/${id}`;
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-    return this.http.get(url, { headers }).pipe(
-      // tap((res) => console.log(res)),
+    return this.http.get<AddCollaboratorResponse>(url, { headers }).pipe(
+      map((resp) => resp.drawing),
       catchError((err) => {
         return throwError(() => err.error.message);
       })

@@ -6,6 +6,9 @@
         Inicio
       </button>
     </div>
+    <div class="center">
+      {{ project?.name }}
+    </div>
     <div class="right">
       <button (click)="openModal()" class="custom-button">
         <i class="fas fa-share-alt mr-5"></i>
@@ -43,7 +46,7 @@
       <!-- <div class="drawing-area">
         {{ project | json }}
       </div> -->
-      <canvas #canvasRef id="canvas" [ngClass]="{'cursor-delete': isDeleting}" width="1035" height="600" ></canvas>
+      <canvas #canvasRef id="canvas" [ngClass]="{'cursor-delete': isDeleting}" width="1080" height="600" ></canvas>
     </div>
     <div class="shapes pl-10 pt-10 pb-10">
       <button class="shape" data-name="Actor" (click)="addActor()">

@@ -9,9 +9,16 @@
 
 .header {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   padding: 10px 130px 10px 100px;
   height: 70px;
+}
+
+.center {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--color-gray-700);
 }
 
 .content {
@@ -137,7 +144,5 @@
   white-space: nowrap; 
 }
 
-/* .cursor-delete {
-  
-} */
+
 

@@ -503,7 +503,7 @@ button {
 }
 
 .slider-container .owl-next, .slider-container .owl-prev {
-  background-color: var(--color-red-200) !important;
+  background-color: var(--color-red-400) !important;
   width: 50px !important;
   height: 35px !important;
 }
@@ -513,7 +513,7 @@ button {
 }
 
 .slider-container .owl-carousel .owl-item {
-  max-width: 270px; 
+  max-width: 283px; 
 }
 
 /* .slider-container .owl-carousel .owl-stage {
