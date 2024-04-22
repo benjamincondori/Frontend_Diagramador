@@ -1,5 +1,6 @@
 .diagramador {
   display: flex;
+  flex-wrap: wrap;
   flex-direction: column;
   width: 100%;
   min-height: 100vh;
@@ -11,14 +12,55 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 130px 10px 100px;
+  padding: 10px 130px 10px 75px;
   height: 70px;
 }
 
 .center {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.center .project-name {
   font-size: 1.2rem;
   font-weight: 500;
   color: var(--color-gray-700);
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
+  position: relative;
+  display: inline-block;
+}
+
+/* .project-name:hover::after {
+  content: attr(data-name);
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  white-space: nowrap;
+  top: 100%; 
+  left: 0;
+  width: 100%; 
+  z-index: 1; 
+} */
+
+.center .connected {
+  color: #0ac022 !important;
+}
+
+.center .status {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #f51616;
+  margin: 0;
 }
 
 .content {
@@ -30,10 +72,10 @@
 .sidebar {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  /* align-items: center;
   justify-content: center;
-  padding: 10px;
-  width: 90px; /* Ancho de la barra lateral */
+  padding: 10px; */
+  width: 65px; 
   /* overflow-y: auto;  
   max-height: calc(100vh - 200px);  */
 }
@@ -48,9 +90,29 @@
 
 .user-avatar img {
   border: 3px solid #fff;
+  position: relative;
 }
 
-.user-avatar, .user-avatar img {
+.user-avatar img::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px !important;
+  font-size: 12px;
+  white-space: nowrap;
+  display: none;
+}
+.user-avatar:hover img::after {
+  display: block;
+}
+
+.user-avatar,
+.user-avatar img {
   width: 55px;
   height: 55px;
   border-radius: 50%;
@@ -80,7 +142,7 @@
   flex: 1;
   border: 1px solid var(--color-gray-300);
   border-radius: 8px;
-  min-height: calc(100vh - 120px); 
+  min-height: calc(100vh - 120px);
   /* width: 100%; */
   background-color: #fff;
 }
@@ -108,7 +170,11 @@
   border: none;
   border-radius: 10px;
   box-shadow: 0px 2px 5px #333;
-  background: linear-gradient(to top, var(--color-red-500), var(--color-red-400));
+  background: linear-gradient(
+    to top,
+    var(--color-red-500),
+    var(--color-red-400)
+  );
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -141,8 +207,7 @@
   padding: 5px 10px;
   border-radius: 5px;
   font-size: 12px;
-  white-space: nowrap; 
+  white-space: nowrap;
 }
-
 
 

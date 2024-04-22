@@ -3,7 +3,7 @@
 import { User } from "src/app/auth/interfaces/user.interface";
 
 export interface Diagram {
-  id:          number;
+  id:          string;
   name:        string;
   description: string;
   data:        string;
@@ -13,7 +13,7 @@ export interface Diagram {
 }
 
 export interface DiagramUpdateParams {
-  id: number;
+  id: string;
   name?: string;
   description?: string;
   data?: string;

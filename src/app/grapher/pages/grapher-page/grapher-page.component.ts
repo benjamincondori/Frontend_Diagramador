@@ -3,6 +3,7 @@ import {
   AfterViewInit,
   Component,
   HostListener,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -13,13 +14,16 @@ import { Entity } from '../../class/entity';
 import { FlowControl } from '../../class/flow-control';
 import { Arrow } from '../../class/arrow';
 import { AlertsService } from 'src/app/shared/services/alerts.service';
+import { WebsocketService } from '../../services/websocket.service';
+import { CookieService } from 'ngx-cookie-service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-grapher-page',
   templateUrl: './grapher-page.component.html',
   styleUrls: ['./grapher-page.component.css'],
 })
-export class GrapherPageComponent implements OnInit, AfterViewInit {
+export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('canvasRef', { static: false }) canvasRef: any;
   private context!: CanvasRenderingContext2D;
   private resizingLifeline: Lifeline | null = null;
@@ -37,9 +41,31 @@ export class GrapherPageComponent implements OnInit, AfterViewInit {
   constructor(
     private grapherService: GrapherService,
     private alertsService: AlertsService,
+    private wsService: WebsocketService,
   ) {}
 
-  ngOnInit(): void {}
+  get isConnected(): boolean {
+    return this.wsService.socketStatus
+  }
+  
+  get clients() {
+    return this.wsService.connectedClients;
+  }
+  
+  get project(): DiagramResponse | undefined {
+    return this.grapherService.project;
+  }
+
+  ngOnInit(): void {
+    // this.wsService.connectClient();
+    this.setupSocketListeners();
+  }
+  
+  ngOnDestroy(): void {
+    const roomName = this.project?.id;
+    if (!roomName) return;
+    this.wsService.leaveRoom(roomName);
+  }
 
   ngAfterViewInit(): void {
     this.initCanvas();
@@ -56,9 +82,21 @@ export class GrapherPageComponent implements OnInit, AfterViewInit {
     this.context = this.canvasRef.nativeElement.getContext('2d');
   }
 
-  get project(): DiagramResponse | undefined {
-    return this.grapherService.project;
+  // Método para configurar los listeners de sockets
+  private setupSocketListeners(): void {
+    this.wsService.onEvent.subscribe((data) => {
+      console.log(data)
+      this.loadProjectState(data);
+    });
   }
+
+  // Método para enviar un cambio al servidor
+  private sendChangeToServer(data: string): void {
+    const id = this.project?.id;
+    if (!id) return;
+    this.wsService.sendUpdateDiagram(id, data);
+  }
+  
   
   generateLink(): void {
     if (this.project === undefined) return;
@@ -87,7 +125,9 @@ export class GrapherPageComponent implements OnInit, AfterViewInit {
       type: obj.constructor.name,
       attributes: { ...obj },
     }));
-    return JSON.stringify(data);
+    const dataString = JSON.stringify(data);
+    this.sendChangeToServer(dataString);
+    return dataString;
   }
 
   // Carga los objetos guardados en el proyecto
@@ -164,34 +204,50 @@ export class GrapherPageComponent implements OnInit, AfterViewInit {
       this.canvasRef.nativeElement.width,
       this.canvasRef.nativeElement.height
     );
-
+    
     this.objects.forEach((obj) => {
       obj.draw(this.context);
     });
   }
+  
+  private async inputName(objtect: Actor | Entity) {
+    const { value: text } = await Swal.fire({
+      title: "Ingrese un nombre",
+      input: "text",
+      showCancelButton: true,
+      inputValidator: (value: string) => {
+        if (!value) {
+          return "Ingrese un nombre!";
+        }
+        return null;
+      }
+    });
+    if (text) {
+      this.objects.push(objtect);
+      objtect.text = text;
+      this.redrawCanvas();
+    }
+    
+  }
 
-  addActor() {
+  async addActor() {
     const actor = new Actor(100, 100, 'Actor');
-    this.objects.push(actor);
-    this.redrawCanvas();
+    await this.inputName(actor);
   }
 
-  addInterface() {
-    const interfa = new Entity(150, 90, '<< Interface >>', 'Customer');
-    this.objects.push(interfa);
-    this.redrawCanvas();
+  async addInterface() {
+    const interfa = new Entity(150, 90, '<< Interface >>', 'Interface');
+    await this.inputName(interfa);
   }
 
-  addControl() {
-    const control = new Entity(320, 90, '<< Control >>', 'Customer');
-    this.objects.push(control);
-    this.redrawCanvas();
+  async addControl() {
+    const control = new Entity(320, 90, '<< Control >>', 'Control');
+    await this.inputName(control);
   }
 
-  addEntity() {
-    const entity = new Entity(490, 90, '<< Entity >>', 'Customer');
-    this.objects.push(entity);
-    this.redrawCanvas();
+  async addEntity() {
+    const entity = new Entity(490, 90, '<< Entity >>', 'Entity');
+    await this.inputName(entity);
   }
 
   addLoop() {
@@ -239,6 +295,8 @@ export class GrapherPageComponent implements OnInit, AfterViewInit {
       // Procede solo si NO se está interactuando con una línea de vida
       this.checkForOtherInteractions(mouseX, mouseY, event);
     }
+    
+    this.saveProjectState();
   }
 
   @HostListener('mousemove', ['$event'])
@@ -256,11 +314,14 @@ export class GrapherPageComponent implements OnInit, AfterViewInit {
     } else if (this.resizingLifeline) {
       this.performLifelineResizing(mouseY);
     }
+    
+    this.saveProjectState();
   }
 
   @HostListener('mouseup')
   onMouseUp(): void {
     this.resetInteractionState();
+    this.saveProjectState();
   }
 
   // Método para manejar el clic en el canvas
@@ -273,7 +334,9 @@ export class GrapherPageComponent implements OnInit, AfterViewInit {
     // Verifica si se hizo clic en un objeto y lo elimina
     if (this.isDeleting) {
       this.checkForDeleteObject(mouseX, mouseY);
+      this.saveProjectState();
     }
+    
   }
 
   private checkForLifelineResizeControl(mouseX: number, mouseY: number): void {
@@ -342,7 +405,7 @@ export class GrapherPageComponent implements OnInit, AfterViewInit {
       ) {
         this.selectedObject = obj;
         this.isResizing = true;
-        // event.preventDefault();
+        event.preventDefault();
         // return;
       } else if (
         obj instanceof Arrow &&
@@ -352,7 +415,7 @@ export class GrapherPageComponent implements OnInit, AfterViewInit {
         if (this.extremeArrow) {
           this.selectedObject = obj;
           this.isArrowResizing = true;
-          // event.preventDefault();
+          event.preventDefault();
           // return;
         }
       } else if (!this.isResizing && obj.isPointInside(mouseX, mouseY)) {
@@ -361,7 +424,7 @@ export class GrapherPageComponent implements OnInit, AfterViewInit {
         this.dragOffsetX = mouseX - obj.x;
         this.dragOffsetY = mouseY - obj.y;
         this.isDragging = true;
-        // event.preventDefault();
+        event.preventDefault();
       }
     });
   }
@@ -398,91 +461,5 @@ export class GrapherPageComponent implements OnInit, AfterViewInit {
     this.canvasRef.nativeElement.style.cursor = 'default';
   }
 
-  // -------------------------------
-
-  // async agregarActor() {
-  //   const { value: text } = await Swal.fire({
-  //     title: "Ingrese un nombre",
-  //     input: "text",
-  //     showCancelButton: true,
-  //     inputValidator: (value) => {
-  //       if (!value) {
-  //         return "Ingrese un nombre!";
-  //       }
-  //       return null;
-  //     }
-  //   });
-  //   if (text) {
-  //     const actor = new Actor(this.canvas, Math.random() * 700, Math.random() * 500, text);
-  //     this.actors.push(actor);
-  //   }
-  // }
-
-  // async agregarInterface() {
-  //   const { value: text } = await Swal.fire({
-  //     title: "Ingrese un nombre",
-  //     input: "text",
-  //     showCancelButton: true,
-  //     inputValidator: (value) => {
-  //       if (!value) {
-  //         return "Ingrese un nombre!";
-  //       }
-  //       return null;
-  //     }
-  //   });
-  //   if (text) {
-  //     const interfa = new Entity(this.canvas, Math.random() * 700, Math.random() * 500, '<<interface>>', text);
-  //     this.actors.push(interfa);
-  //   }
-  // }
-
-  // async agregarControl() {
-  //   const { value: text } = await Swal.fire({
-  //     title: "Ingrese un nombre",
-  //     input: "text",
-  //     showCancelButton: true,
-  //     inputValidator: (value) => {
-  //       if (!value) {
-  //         return "Ingrese un nombre!";
-  //       }
-  //       return null;
-  //     }
-  //   });
-  //   if (text) {
-  //     const control = new Entity(this.canvas, Math.random() * 700, Math.random() * 500, '<<control>>', text);
-  //     this.actors.push(control);
-  //   }
-  // }
-
-  // async agregarEntity() {
-  //   const { value: text } = await Swal.fire({
-  //     title: "Ingrese un nombre",
-  //     input: "text",
-  //     showCancelButton: true,
-  //     inputValidator: (value) => {
-  //       if (!value) {
-  //         return "Ingrese un nombre!";
-  //       }
-  //       return null;
-  //     }
-  //   });
-  //   if (text) {
-  //     const entity = new Entity(this.canvas, Math.random() * 700, Math.random() * 500, '<<entity>>', text);
-  //     this.actors.push(entity);
-  //   }
-  // }
-
-  // activarEliminar(): void {
-  //   this.isDeleting = !this.isDeleting;
-  //   if (this.isDeleting) {
-  //     console.log('Modo Eliminar activado');
-  //   } else {
-  //     console.log('Modo Eliminar desactivado');
-  //   }
-  // }
-
-  // eliminarActor(obj: any): void {
-  //   this.canvas.remove(obj);
-  //   this.actors = this.actors.filter(actor => actor.group !== obj);
-  // }
+  
 }

@@ -7,7 +7,12 @@
       </button>
     </div>
     <div class="center">
-      {{ project?.name }}
+      <span class="project-name" [attr.data-name]="project?.name">{{
+        project?.name
+      }}</span>
+      <span class="status" [ngClass]="{ connected: isConnected }">{{
+        isConnected ? "Conectado" : "Desconectado"
+      }}</span>
     </div>
     <div class="right">
       <button (click)="openModal()" class="custom-button">
@@ -26,10 +31,18 @@
 
   <div class="content">
     <div class="sidebar">
-      <div class="user-avatar active">
-        <img src="./assets/images/avatars/300-1.jpg" alt="avatar-1" />
+      <div class="user-avatar active" *ngFor="let client of clients">
+        <img
+          [src]="
+            client.photo !== ''
+              ? client.photo
+              : './assets/images/user_profile.png'
+          "
+          alt="avatar-1"
+          [title]="client.fullname"
+        />
       </div>
-      <div class="user-avatar active">
+      <!-- <div class="user-avatar active">
         <img src="./assets/images/avatars/300-2.jpg" alt="avatar-2" />
       </div>
       <div class="user-avatar active">
@@ -40,13 +53,19 @@
       </div>
       <div class="user-avatar active">
         <img src="./assets/images/avatars/300-5.jpg" alt="avatar-5" />
-      </div>
+      </div> -->
     </div>
     <div class="canvas">
       <!-- <div class="drawing-area">
         {{ project | json }}
       </div> -->
-      <canvas #canvasRef id="canvas" [ngClass]="{'cursor-delete': isDeleting}" width="1080" height="600" ></canvas>
+      <canvas
+        #canvasRef
+        id="canvas"
+        [ngClass]="{ 'cursor-delete': isDeleting }"
+        width="1060"
+        height="600"
+      ></canvas>
     </div>
     <div class="shapes pl-10 pt-10 pb-10">
       <button class="shape" data-name="Actor" (click)="addActor()">
@@ -84,10 +103,7 @@
         />
       </button>
       <button class="shape" data-name="Left Arrow" (click)="addLeftArrow()">
-        <img
-          src="./assets/images/ic_return_dark.png"
-          alt="icon-left-arrow"
-        />
+        <img src="./assets/images/ic_return_dark.png" alt="icon-left-arrow" />
       </button>
       <button class="shape" data-name="Message">
         <img
@@ -99,7 +115,11 @@
       <button class="shape" data-name="Remove" (click)="enableDelete()">
         <img
           class="img-small"
-          [src]="isDeleting ? './assets/images/ic_eraser.png' : './assets/images/ic_eraser_dark.png'"
+          [src]="
+            isDeleting
+              ? './assets/images/ic_eraser.png'
+              : './assets/images/ic_eraser_dark.png'
+          "
           alt="icon-remove"
         />
       </button>

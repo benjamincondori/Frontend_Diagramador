@@ -109,7 +109,7 @@ export class HomeService implements OnInit {
   }
 
   // Eliminar un proyecto
-  deleteProject(id: number): Observable<any> {
+  deleteProject(id: string): Observable<any> {
     const url = `${this.baseUrl}/drawing/delete/${id}`;
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
@@ -124,7 +124,7 @@ export class HomeService implements OnInit {
   
   
   // Obtener un proyecto por su id
-  getProject(id: number): Observable<DiagramResponse> {
+  getProject(id: string): Observable<DiagramResponse> {
     const url = `${this.baseUrl}/drawing/${id}`;
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);

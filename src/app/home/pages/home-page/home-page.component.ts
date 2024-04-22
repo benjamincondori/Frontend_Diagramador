@@ -172,7 +172,7 @@ export class HomePageComponent implements OnInit {
   
 
   // Eliminar un proyecto
-  deleteProject(id: number): void {
+  deleteProject(id: string): void {
     // this.hideOptions();
     this.showConfirmationDialog().then((confirmed) => {
       if (confirmed) {

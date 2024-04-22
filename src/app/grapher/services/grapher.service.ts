@@ -4,6 +4,8 @@ import { catchError, Observable, Subject, tap, throwError } from 'rxjs';
 import { DiagramResponse } from 'src/app/home/interfaces/diagrams-response.interface';
 import { environment } from 'src/environments/environment';
 import { Link } from '../interfaces/link.interface';
+import { CookieService } from 'ngx-cookie-service';
+import { WebsocketService } from './websocket.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +20,11 @@ export class GrapherService {
   private _link = new Subject<Link>();
   public link = this._link.asObservable();
   
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private cookieService: CookieService,
+    private wsService: WebsocketService,
+  ) { }
   
   get isOpen(): boolean {
     return this.showModal;
@@ -39,13 +45,24 @@ export class GrapherService {
   setCurrentProject(project: DiagramResponse): void {
     this.currentProject = project;
     this.generateTokenShare(project.id).subscribe();
+    
+    // this.saveCookieRoom(project.id);
+    this.joinRoom();
   }
+  
+  private joinRoom() {
+    this.wsService.joinRoom(this.project!.id);
+  }
+  
+  // private saveCookieRoom(nameRoom: string) {
+  //   this.cookieService.set('room', nameRoom);
+  // }
   
   setDataCurrentProject(data: string): void {
     this.currentProject!.data = data;
   }
   
-  generateTokenShare(id: number): Observable<Link> {
+  generateTokenShare(id: string): Observable<Link> {
     const url = `${this.baseUrl}/drawing/share-token/${id}`;
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);

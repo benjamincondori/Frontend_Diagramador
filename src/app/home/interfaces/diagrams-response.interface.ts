@@ -3,7 +3,7 @@
 import { User } from "src/app/auth/interfaces/user.interface";
 
 export interface DiagramResponse {
-  id:          number;
+  id:          string;
   name:        string;
   description: string;
   data:        string;

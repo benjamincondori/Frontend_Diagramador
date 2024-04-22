@@ -75,7 +75,6 @@ export class ModalComponent implements OnInit {
     this.homeService.createProject(name, description).subscribe({
       next: (project) => {
         // this.diagrammerService.setCurrentDiagram(diagram);
-        
         this.modalService.closeModal();
         this.projectForm.reset();
         
