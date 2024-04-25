@@ -7,4 +7,5 @@ export enum NameClass {
   Entity = 'Entity',
   FlowControl = 'FlowControl',
   LoopArrow = 'LoopArrow',
+  Message = 'Message',
 }

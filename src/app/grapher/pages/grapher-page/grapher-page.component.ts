@@ -2,6 +2,7 @@ import { Actor } from './../../class/actor';
 import {
   AfterViewInit,
   Component,
+  ElementRef,
   HostListener,
   OnDestroy,
   OnInit,
@@ -20,7 +21,7 @@ import Swal from 'sweetalert2';
 import { LoopArrow } from '../../class/arrow-loop';
 import * as jspdf from 'jspdf';
 import { NameClass } from '../../class/name-class.enum';
-
+import { Message } from '../../class/message';
 
 @Component({
   selector: 'app-grapher-page',
@@ -28,8 +29,9 @@ import { NameClass } from '../../class/name-class.enum';
   styleUrls: ['./grapher-page.component.css'],
 })
 export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
-  @ViewChild('canvasRef', { static: false }) canvasRef: any;
-  
+  @ViewChild('canvas', { static: false })
+  canvasRef!: ElementRef<HTMLCanvasElement>;
+
   public imagenURL?: string;
   private context!: CanvasRenderingContext2D;
   private resizingLifeline: Lifeline | null = null;
@@ -39,9 +41,17 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
     | FlowControl
     | Arrow
     | LoopArrow
+    | Message
     | null = null;
 
-  private objects: (Actor | Entity | FlowControl | Arrow | LoopArrow)[] = [];
+  private objects: (
+    | Actor
+    | Entity
+    | FlowControl
+    | Arrow
+    | LoopArrow
+    | Message
+  )[] = [];
   private isDragging: boolean = false;
   private isResizing: boolean = false;
   public isDeleting: boolean = false;
@@ -90,7 +100,7 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private initCanvas(): void {
     this.canvasRef.nativeElement.style.background = '#fff';
-    this.context = this.canvasRef.nativeElement.getContext('2d');
+    this.context = this.canvasRef.nativeElement.getContext('2d')!;
   }
 
   // Método para configurar los listeners de sockets
@@ -148,7 +158,7 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
     const objects = JSON.parse(projectsJson);
 
     this.objects = objects.map((obj: any) => {
-      let object: Actor | Entity | FlowControl | Arrow;
+      let object: Actor | Entity | FlowControl | Arrow | LoopArrow | Message;
 
       switch (obj.type) {
         case NameClass.Actor:
@@ -200,13 +210,30 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
           arrow.async = obj.attributes.async;
           object = arrow;
           break;
+        case NameClass.LoopArrow:
+          const loopArrow = new LoopArrow(
+            obj.attributes.x,
+            obj.attributes.y,
+            obj.attributes.text
+          );
+          object = loopArrow;
+          break;
+        case NameClass.Message:
+          const message = new Message(
+            obj.attributes.x,
+            obj.attributes.y,
+            obj.attributes.text,
+            this.context
+          );
+          object = message;
+          break;
         default:
           throw new Error(`Unsupported diagram element type: ${obj.type}`);
       }
 
       return object;
     });
-    
+
     this.redrawCanvas();
   }
 
@@ -224,9 +251,13 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  private async inputName(object: Actor | Entity | Arrow, isEdit = false) {
+  private async inputName(
+    object: Actor | Entity | Arrow | LoopArrow | Message,
+    isEdit = false,
+    title = 'Ingrese un nombre'
+  ) {
     const { value: text } = await Swal.fire({
-      title: 'Ingrese un nombre',
+      title: title,
       input: 'text',
       inputValue: object.text,
       showCancelButton: true,
@@ -266,14 +297,19 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.inputName(entity);
   }
 
+  async addMessage() {
+    const message = new Message(600, 170, '', this.context);
+    await this.inputName(message, false, 'Ingrese un mensaje');
+  }
+
   addLoop() {
-    const loop = new FlowControl(200, 200, 'Loop');
+    const loop = new FlowControl(420, 200, 'Loop');
     this.objects.push(loop);
     this.redrawCanvas();
   }
 
   addAlt() {
-    const alt = new FlowControl(420, 250, 'Alt');
+    const alt = new FlowControl(640, 250, 'Alt');
     this.objects.push(alt);
     this.redrawCanvas();
   }
@@ -284,21 +320,21 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
     this.redrawCanvas();
   }
 
-  addLoopArrow() {
-    const loopArrow = new LoopArrow(100, 220, 'Mensaje');
-    this.objects.push(loopArrow);
-    this.redrawCanvas();
-  }
-
   addRightSyncArrow() {
-    const rightArrow = new Arrow(100, 220, 'Mensaje', false, true);
+    const rightArrow = new Arrow(100, 250, 'Mensaje', false, true);
     this.objects.push(rightArrow);
     this.redrawCanvas();
   }
 
   addLeftArrow() {
-    const leftArrow = new Arrow(100, 270, 'Respuesta', true);
+    const leftArrow = new Arrow(100, 280, 'Respuesta', true);
     this.objects.push(leftArrow);
+    this.redrawCanvas();
+  }
+
+  addLoopArrow() {
+    const loopArrow = new LoopArrow(100, 310, 'Mensaje');
+    this.objects.push(loopArrow);
     this.redrawCanvas();
   }
 
@@ -376,12 +412,18 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
     if (
       this.selectedObject &&
       (this.selectedObject instanceof Actor ||
-        this.selectedObject instanceof Entity ||
-        this.selectedObject instanceof Arrow)
+        this.selectedObject instanceof Entity)
     ) {
       this.inputName(this.selectedObject, true);
-      this.saveProjectState();
+    } else if (
+      this.selectedObject &&
+      (this.selectedObject instanceof Arrow ||
+        this.selectedObject instanceof LoopArrow ||
+        this.selectedObject instanceof Message)
+    ) {
+      this.inputName(this.selectedObject, true, 'Ingrese un mensaje');
     }
+    this.saveProjectState();
   }
 
   private checkForLifelineResizeControl(mouseX: number, mouseY: number): void {
@@ -538,7 +580,7 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
     // link.download = 'mi_diagrama.png';
     // link.click();
   }
-  
+
   guardarComoPDF() {
     const canvas = this.canvasRef.nativeElement;
     const pdf = new jspdf.jsPDF('l', 'px', [canvas.width, canvas.height]);

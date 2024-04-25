@@ -60,7 +60,7 @@
         {{ project | json }}
       </div> -->
       <canvas
-        #canvasRef
+        #canvas
         id="canvas"
         [ngClass]="{ 'cursor-delete': isDeleting }"
         width="1100"
@@ -80,6 +80,13 @@
       <button class="shape" data-name="Entity" (click)="addEntity()">
         <img src="./assets/images/ic_entity_dark.png" alt="icon-entity" />
       </button>
+      <button class="shape" data-name="Message" (click)="addMessage()">
+        <img
+          class="img-small"
+          src="./assets/images/ic_message_dark.png"
+          alt="icon-message"
+        />
+      </button>
     </div>
     <div class="shapes pl-10 pt-10 pb-10">
       <button class="shape" data-name="Loop" (click)="addLoop()">
@@ -98,28 +105,21 @@
       </button>
       <button class="shape" data-name="Sync Message" (click)="addRightArrow()">
         <img
-          src="./assets/images/ic_dispatch_dark.png"
+          src="./assets/images/ic_right_sync_dark.png"
           alt="icon-right-arrow"
         />
       </button>
       <button class="shape" data-name="Async Message" (click)="addRightSyncArrow()">
         <img
-          src="./assets/images/ic_dispatch_dark.png"
+          src="./assets/images/ic_right_async_dark.png"
           alt="icon-right-arrow"
         />
       </button>
       <button class="shape" data-name="Response Message" (click)="addLeftArrow()">
         <img src="./assets/images/ic_return_dark.png" alt="icon-left-arrow" />
       </button>
-      <!-- <button class="shape" data-name="Loop" (click)="addLoopArrow()">
-        <img src="./assets/images/ic_return_dark.png" alt="icon-left-arrow" />
-      </button> -->
-      <button class="shape" data-name="Message">
-        <img
-          class="img-small"
-          src="./assets/images/ic_message_dark.png"
-          alt="icon-message"
-        />
+      <button class="shape" data-name="Recursive" (click)="addLoopArrow()">
+        <img src="./assets/images/ic_loop_arrow_dark.png" alt="icon-left-arrow" />
       </button>
       <button class="shape" data-name="Remove" (click)="enableDelete()">
         <img

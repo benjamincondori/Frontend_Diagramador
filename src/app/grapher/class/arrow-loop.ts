@@ -4,8 +4,8 @@ export class LoopArrow {
   public type: string = NameClass.LoopArrow;
   public x: number;
   public y: number;
-  public width: number;
-  public height: number;
+  private width: number;
+  private height: number;
   public text: string
 
   constructor(x: number, y: number, text: string) {
@@ -45,12 +45,11 @@ export class LoopArrow {
     context.moveTo(this.x + arrowHeadSize, this.y + this.height - arrowHeadSize);
     context.lineTo(this.x, this.y + this.height);
     context.lineTo(this.x + arrowHeadSize, this.y + this.height + arrowHeadSize);
-    context.stroke();
+    context.fill();
     
     // Texto sobre la línea de arriba y centrado
     context.font = '14px Poppins';
-    context.textAlign = 'center';
-    context.fillText(this.text, this.x + this.width / 2, this.y - 10);
+    context.fillText(this.text, this.x + arrowHeadSize + 5, this.y - 10);
   }
   
   isPointInside(x: number, y: number): boolean {
@@ -64,9 +63,9 @@ export class LoopArrow {
   
   move(dx: number, dy: number): void {
     // Limitar el movimiento en el eje X (a la izquierda)
-    if (this.x + dx < 50) {
-      dx = 50 - this.x; // Restringir el movimiento
-    }
+    // if (this.x + dx < 50) {
+    //   dx = 50 - this.x; // Restringir el movimiento
+    // }
     
     this.x += dx;
     this.y += dy;
