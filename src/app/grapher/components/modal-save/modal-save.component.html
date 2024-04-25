@@ -5,7 +5,15 @@
       <span class="close" (click)="closeModal()">&times;</span>
     </div>
     <div class="modal-body">
-      <button (click)="save()" class="custom-button ml-10 btn-success">
+      <button (click)="saveAsImage()" class="custom-button mb-10">
+        Exportar como PNG
+      </button>
+      
+      <button (click)="saveAsJson()" class="custom-button mb-10">
+        Exportar como JSON
+      </button>
+      
+      <button (click)="save()" class="custom-button btn-success">
         <i class="fa fa-save mr-5"></i>
         Guardar cambios
       </button>

@@ -1,4 +1,7 @@
+import { NameClass } from "./name-class.enum";
+
 export class FlowControl {
+  public type: string = NameClass.FlowControl;
   public x: number;
   public y: number;
   public width: number;
@@ -31,7 +34,7 @@ export class FlowControl {
     context.fill(); 
     context.font = "bold 14px Poppins";
     context.fillStyle = "white";
-    context.fillText(this.text, this.x + 5, this.y + 20); // Etiqueta 
+    context.fillText(this.text, this.x + 10, this.y + 20); // Etiqueta 
     context.closePath(); 
     
     // Cuadrito de redimensionamiento

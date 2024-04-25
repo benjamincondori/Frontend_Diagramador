@@ -1,7 +1,10 @@
+import { NameClass } from "./name-class.enum";
+
 export class Lifeline {
-  x: number;
-  y: number;
-  height: number;
+  public type: string = NameClass.Lifeline;
+  public x: number;
+  public y: number;
+  public height: number;
 
   constructor(x: number, y: number, height: number) {
     this.x = x;
@@ -52,6 +55,6 @@ export class Lifeline {
 
   move(dx: number, dy: number): void {
     this.x += dx;
-    this.y += dy;
+    // this.y += dy;
   }
 }

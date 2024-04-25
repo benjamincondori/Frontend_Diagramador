@@ -1,6 +1,8 @@
 import { Lifeline } from "./lifeline.class";
+import { NameClass } from "./name-class.enum";
 
 export class Entity {
+  public type: string = NameClass.Entity;
   public x: number;
   public y: number;
   private width: number;
@@ -56,14 +58,14 @@ export class Entity {
     context.closePath();
     
     
-     // Estereotype
-     context.font = '15px Poppins'; 
-     context.fillStyle = 'black';
-     const stereotypeWidth = context.measureText(this.stereotype).width;
-     const stereotypeX = this.x + (this.width - stereotypeWidth) / 2; // Centrar horizontalmente
-     const stereotypeY = this.y + this.height / 2 - 10; // Centrar verticalmente (10 unidades por encima del centro)
-     context.fillText(this.stereotype, stereotypeX, stereotypeY);
-     context.closePath();
+    // Estereotype
+    context.font = '15px Poppins'; 
+    context.fillStyle = 'black';
+    const stereotypeWidth = context.measureText(this.stereotype).width;
+    const stereotypeX = this.x + (this.width - stereotypeWidth) / 2; // Centrar horizontalmente
+    const stereotypeY = this.y + this.height / 2 - 10; // Centrar verticalmente (10 unidades por encima del centro)
+    context.fillText(this.stereotype, stereotypeX, stereotypeY);
+    context.closePath();
 
     // Texto
     context.font = 'bold 16px Poppins';
@@ -88,8 +90,13 @@ export class Entity {
   }
 
   move(dx: number, dy: number): void {
+    // Limitar el movimiento en el eje X (a la izquierda)
+    if (this.x + dx < 50) {
+      dx = 50 - this.x; // Restringir el movimiento
+    }
+    
     this.x += dx;
-    this.y += dy;
+    // this.y += dy;
     
     // Mueve la línea de vida junto con el actor
     this.lifeline.move(dx, dy);

@@ -1,22 +1,28 @@
+import { NameClass } from "./name-class.enum";
+
 export class Arrow {
+  public type: string = NameClass.Arrow;
   public x: number;
   public y: number;
   public endX: number;
   private dashed: boolean;
+  public async: boolean;
   public text: string;
 
-  constructor(x: number, y: number, text: string, dashed: boolean) {
+  constructor(x: number, y: number, text: string, dashed: boolean, async: boolean = false) {
     this.x = x;
     this.y = y;
     this.endX = 300;
     this.text = text;
     this.dashed = dashed;
+    this.async = async;
   }
 
   draw(context: CanvasRenderingContext2D): void {
     if (this.dashed) {
       this.drawLeftArrow(context);
     } else {
+      // this.drawRightArrow(context);
       this.drawRightArrow(context);
     }
 
@@ -41,7 +47,12 @@ export class Arrow {
     context.moveTo(this.endX - arrowHeadSize, this.y - arrowHeadSize + 3);
     context.lineTo(this.endX, this.y);
     context.lineTo(this.endX - arrowHeadSize, this.y + arrowHeadSize - 3);
-    context.fill();
+    
+    if (this.async) {
+      context.stroke();
+    } else {
+      context.fill();
+    }
 
     // Cuadradito en el otro extremo de la flecha
     const squareSize = 8; // Tamaño del cuadradito
@@ -74,6 +85,7 @@ export class Arrow {
       squareSize
     );
   }
+  
 
   isPointInside(x: number, y: number): boolean {
     return (

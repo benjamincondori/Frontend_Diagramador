@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { GrapherService } from '../../services/grapher.service';
 import { DiagramUpdateParams } from 'src/app/home/interfaces/diagram.interface';
 import { DiagramResponse } from 'src/app/home/interfaces/diagrams-response.interface';
@@ -11,7 +11,8 @@ import { AlertsService } from 'src/app/shared/services/alerts.service';
   styleUrls: ['./modal-save.component.css']
 })
 export class ModalSaveComponent {
-
+  @Input() imagenURL?: string;
+  
   constructor(
     private grapherService: GrapherService,
     private homeService: HomeService,
@@ -55,6 +56,34 @@ export class ModalSaveComponent {
         this.alertsService.alertError(message, title);
       },
     });
+  }
+  
+  saveAsImage() {
+    // Crear un enlace temporal para descargar la imagen
+    if (!this.imagenURL) return;
+    const link = document.createElement('a');
+    link.href = this.imagenURL;
+    link.download = 'mi_diagrama.png';
+    link.click();
+  }
+  
+  saveAsJson() {
+    const data = this.grapherService.project?.data;
+    if (!data) return;
+    const dataString = JSON.stringify(data);
+    this.descargarArchivo(dataString, 'diagrama.json', 'application/json');
+  }
+  
+  descargarArchivo(contenido: string, nombreArchivo: string, tipoArchivo: string) {
+    const blob = new Blob([contenido], { type: tipoArchivo });
+    const url = window.URL.createObjectURL(blob);
+
+    const enlace = document.createElement('a');
+    enlace.href = url;
+    enlace.download = nombreArchivo;
+    enlace.click();
+
+    window.URL.revokeObjectURL(url);
   }
   
 }

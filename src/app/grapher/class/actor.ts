@@ -1,6 +1,8 @@
 import { Lifeline } from "./lifeline.class";
+import { NameClass } from "./name-class.enum";
 
 export class Actor {
+  public type: string = 'Actor';
   public x: number;
   public y: number;
   private width: number;
@@ -15,7 +17,7 @@ export class Actor {
     this.width = 40;
     this.height = 70;
     this.text = text;
-    this.textYPosition = this.x + 70;
+    this.textYPosition = this.y + 70;
     
     // Inicializa la línea de vida para que comience desde la posición Y del texto
     this.lifeline = new Lifeline(
@@ -82,11 +84,17 @@ export class Actor {
   }
 
   move(dx: number, dy: number): void {
+    
+    // Limitar el movimiento en el eje X (a la izquierda)
+    if (this.x + dx < 80) {
+      dx = 80 - this.x; // Restringir el movimiento
+    }
+    
     this.x += dx;
-    this.y += dy;
+    // this.y += dy;
     
     // Mueve la línea de vida junto con el actor
     this.lifeline.move(dx, dy);
-    this.textYPosition += dy; // Asegúrate de mover también la posición Y del texto
+    // this.textYPosition += dy; // Asegúrate de mover también la posición Y del texto
   }
 }

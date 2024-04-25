@@ -30,6 +30,7 @@ export class ModalComponent implements OnInit {
     this.projectForm = this.fb.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
+      data: [''],
     });
     
     this.modalService.editing.subscribe((isEditing) => {
@@ -37,6 +38,7 @@ export class ModalComponent implements OnInit {
         this.projectForm.patchValue({
           name: this.project?.name,
           description: this.project?.description,
+          data: this.project?.data,
         });
       } else {
         this.projectForm.reset();
@@ -117,6 +119,23 @@ export class ModalComponent implements OnInit {
         this.alertsService.alertError(message, title);
       },
     });
+  }
+  
+  cargarArchivo(event: any) {
+    let datosCargados: any = null;
+    const archivo = event.target.files[0];
+    const lector = new FileReader();
+
+    lector.onload = (e) => {
+      const contenido = e.target!.result;
+      datosCargados = JSON.parse(contenido as string);
+      this.projectForm.patchValue({
+        data: datosCargados,
+      });
+      console.log('Datos cargados:', datosCargados);
+    };
+
+    lector.readAsText(archivo);
   }
   
   closeModal(): void {

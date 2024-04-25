@@ -33,6 +33,18 @@
         <span *ngIf="isValidField('description')" class="form-text text-danger">
           {{ getMessageError('description') }}
         </span>
+        
+        <div *ngIf="isEditing" class="form-content mt-15">
+          <label for="data">Importar Data:</label>
+          <input type="file" name="data" accept=".json" class="mb-10" (change)="cargarArchivo($event)">
+          <textarea
+            formControlName="data"
+            class="custom-input"
+            readonly
+            id="data"
+            rows="5"
+          ></textarea>
+        </div>
       </div>
       <div class="modal-footer">
         <button type="submit" class="custom-button">

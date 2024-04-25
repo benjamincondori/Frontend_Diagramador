@@ -27,7 +27,7 @@
   </div>
 
   <app-modal-share></app-modal-share>
-  <app-modal-save></app-modal-save>
+  <app-modal-save [imagenURL]="imagenURL"></app-modal-save>
 
   <div class="content">
     <div class="sidebar">
@@ -55,7 +55,7 @@
         <img src="./assets/images/avatars/300-5.jpg" alt="avatar-5" />
       </div> -->
     </div>
-    <div class="canvas">
+    <div id="canvasContainer" class="canvas">
       <!-- <div class="drawing-area">
         {{ project | json }}
       </div> -->
@@ -63,7 +63,7 @@
         #canvasRef
         id="canvas"
         [ngClass]="{ 'cursor-delete': isDeleting }"
-        width="1060"
+        width="1100"
         height="600"
       ></canvas>
     </div>
@@ -89,22 +89,31 @@
           alt="icon-loop"
         />
       </button>
-      <button class="shape" data-name="Conditional" (click)="addAlt()">
+      <button class="shape" data-name="Alt" (click)="addAlt()">
         <img
           class="img-small"
           src="./assets/images/ic_conditional_dark.png"
           alt="icon-conditional"
         />
       </button>
-      <button class="shape" data-name="Right Arrow" (click)="addRightArrow()">
+      <button class="shape" data-name="Sync Message" (click)="addRightArrow()">
         <img
           src="./assets/images/ic_dispatch_dark.png"
           alt="icon-right-arrow"
         />
       </button>
-      <button class="shape" data-name="Left Arrow" (click)="addLeftArrow()">
+      <button class="shape" data-name="Async Message" (click)="addRightSyncArrow()">
+        <img
+          src="./assets/images/ic_dispatch_dark.png"
+          alt="icon-right-arrow"
+        />
+      </button>
+      <button class="shape" data-name="Response Message" (click)="addLeftArrow()">
         <img src="./assets/images/ic_return_dark.png" alt="icon-left-arrow" />
       </button>
+      <!-- <button class="shape" data-name="Loop" (click)="addLoopArrow()">
+        <img src="./assets/images/ic_return_dark.png" alt="icon-left-arrow" />
+      </button> -->
       <button class="shape" data-name="Message">
         <img
           class="img-small"

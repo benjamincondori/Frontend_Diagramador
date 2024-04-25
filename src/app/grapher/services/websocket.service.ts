@@ -63,12 +63,12 @@ export class WebsocketService extends Socket {
   
   joinRoom(roomName: string) {
     this.socket.emit('join-room', roomName);
-    // this.connectClient();
+    this.connectClient();
   }
   
   leaveRoom(roomName: string) {
     this.socket.emit('leave-room', roomName);
-    // this.disconnectClient();
+    this.disconnectClient();
   }
   
   sendUpdateDiagram(id: string, data: string) {

@@ -26,7 +26,7 @@ export class HomePageComponent implements OnInit {
   showOptions = false;
   openCardIndex: number = -1;
   
-  @ViewChild('card') card!: ElementRef;
+  @ViewChild('card') card?: ElementRef;
   
   constructor(
     private renderer: Renderer2,
@@ -64,7 +64,7 @@ export class HomePageComponent implements OnInit {
     });
     
     this.renderer.listen('document', 'click', (event) => {
-      const clickedOutsideCards = !this.card.nativeElement.contains(
+      const clickedOutsideCards = !this.card?.nativeElement.contains(
         event.target
       );
       if (this.showOptions && clickedOutsideCards) {

@@ -85,5 +85,12 @@
 }
 
 
+.form-content input[type="file"] {
+  background: none;
+  border: none;
+}
+
+
+
 
 

@@ -17,6 +17,10 @@ import { AlertsService } from 'src/app/shared/services/alerts.service';
 import { WebsocketService } from '../../services/websocket.service';
 import { CookieService } from 'ngx-cookie-service';
 import Swal from 'sweetalert2';
+import { LoopArrow } from '../../class/arrow-loop';
+import * as jspdf from 'jspdf';
+import { NameClass } from '../../class/name-class.enum';
+
 
 @Component({
   selector: 'app-grapher-page',
@@ -25,11 +29,19 @@ import Swal from 'sweetalert2';
 })
 export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('canvasRef', { static: false }) canvasRef: any;
+  
+  public imagenURL?: string;
   private context!: CanvasRenderingContext2D;
   private resizingLifeline: Lifeline | null = null;
-  private selectedObject: Actor | Entity | FlowControl | Arrow | null = null;
+  private selectedObject:
+    | Actor
+    | Entity
+    | FlowControl
+    | Arrow
+    | LoopArrow
+    | null = null;
 
-  private objects: (Actor | Entity | FlowControl | Arrow)[] = [];
+  private objects: (Actor | Entity | FlowControl | Arrow | LoopArrow)[] = [];
   private isDragging: boolean = false;
   private isResizing: boolean = false;
   public isDeleting: boolean = false;
@@ -41,17 +53,17 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private grapherService: GrapherService,
     private alertsService: AlertsService,
-    private wsService: WebsocketService,
+    private wsService: WebsocketService
   ) {}
 
   get isConnected(): boolean {
-    return this.wsService.socketStatus
+    return this.wsService.socketStatus;
   }
-  
+
   get clients() {
     return this.wsService.connectedClients;
   }
-  
+
   get project(): DiagramResponse | undefined {
     return this.grapherService.project;
   }
@@ -60,7 +72,7 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
     // this.wsService.connectClient();
     this.setupSocketListeners();
   }
-  
+
   ngOnDestroy(): void {
     const roomName = this.project?.id;
     if (!roomName) return;
@@ -74,7 +86,6 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
       const data = this.project.data;
       this.loadProjectState(data);
     }
-    
   }
 
   private initCanvas(): void {
@@ -85,7 +96,7 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
   // Método para configurar los listeners de sockets
   private setupSocketListeners(): void {
     this.wsService.onEvent.subscribe((data) => {
-      console.log(data)
+      console.log(data);
       this.loadProjectState(data);
     });
   }
@@ -96,14 +107,15 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!id) return;
     this.wsService.sendUpdateDiagram(id, data);
   }
-  
-  
+
   generateLink(): void {
     if (this.project === undefined) return;
     const id = this.project.id;
     this.grapherService.generateTokenShare(id).subscribe({
       error: (err) => {
-        this.alertsService.alertError('Error al generar el enlace de compartido');
+        this.alertsService.alertError(
+          'Error al generar el enlace de compartido'
+        );
       },
     });
   }
@@ -114,15 +126,16 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   openModalSave(): void {
+    this.saveAsImage();
     this.grapherService.openModalSave();
     const data = this.saveProjectState();
     this.grapherService.setDataCurrentProject(data);
   }
-  
+
   // Guarda el estado del proyecto
   saveProjectState(): string {
     const data = this.objects.map((obj) => ({
-      type: obj.constructor.name,
+      type: obj.type,
       attributes: { ...obj },
     }));
     const dataString = JSON.stringify(data);
@@ -136,9 +149,9 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.objects = objects.map((obj: any) => {
       let object: Actor | Entity | FlowControl | Arrow;
-      
+
       switch (obj.type) {
-        case 'Actor':
+        case NameClass.Actor:
           const actor = new Actor(
             obj.attributes.x,
             obj.attributes.y,
@@ -152,7 +165,7 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
           );
           object = actor;
           break;
-        case 'Entity':
+        case NameClass.Entity:
           const entity = new Entity(
             obj.attributes.x,
             obj.attributes.y,
@@ -166,7 +179,7 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
           );
           object = entity;
           break;
-        case 'FlowControl':
+        case NameClass.FlowControl:
           const flowControl = new FlowControl(
             obj.attributes.x,
             obj.attributes.y,
@@ -176,7 +189,7 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
           flowControl.width = obj.attributes.width;
           object = flowControl;
           break;
-        case 'Arrow':
+        case NameClass.Arrow:
           const arrow = new Arrow(
             obj.attributes.x,
             obj.attributes.y,
@@ -184,12 +197,13 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
             obj.attributes.dashed
           );
           arrow.endX = obj.attributes.endX;
+          arrow.async = obj.attributes.async;
           object = arrow;
           break;
         default:
           throw new Error(`Unsupported diagram element type: ${obj.type}`);
       }
-      
+
       return object;
     });
     
@@ -204,66 +218,80 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
       this.canvasRef.nativeElement.width,
       this.canvasRef.nativeElement.height
     );
-    
+
     this.objects.forEach((obj) => {
       obj.draw(this.context);
     });
   }
-  
-  private async inputName(objtect: Actor | Entity) {
+
+  private async inputName(object: Actor | Entity | Arrow, isEdit = false) {
     const { value: text } = await Swal.fire({
-      title: "Ingrese un nombre",
-      input: "text",
+      title: 'Ingrese un nombre',
+      input: 'text',
+      inputValue: object.text,
       showCancelButton: true,
       inputValidator: (value: string) => {
         if (!value) {
-          return "Ingrese un nombre!";
+          return 'Ingrese un nombre!';
         }
         return null;
-      }
+      },
     });
     if (text) {
-      this.objects.push(objtect);
-      objtect.text = text;
+      if (!isEdit) {
+        this.objects.push(object);
+      }
+      object.text = text;
       this.redrawCanvas();
     }
-    
   }
 
   async addActor() {
-    const actor = new Actor(100, 100, 'Actor');
+    const actor = new Actor(100, 50, '');
     await this.inputName(actor);
   }
 
   async addInterface() {
-    const interfa = new Entity(150, 90, '<< Interface >>', 'Interface');
+    const interfa = new Entity(150, 40, '<< Interface >>', '');
     await this.inputName(interfa);
   }
 
   async addControl() {
-    const control = new Entity(320, 90, '<< Control >>', 'Control');
+    const control = new Entity(320, 40, '<< Control >>', '');
     await this.inputName(control);
   }
 
   async addEntity() {
-    const entity = new Entity(490, 90, '<< Entity >>', 'Entity');
+    const entity = new Entity(490, 40, '<< Entity >>', '');
     await this.inputName(entity);
   }
 
   addLoop() {
-    const loop = new FlowControl(200, 200, '[Loop]');
+    const loop = new FlowControl(200, 200, 'Loop');
     this.objects.push(loop);
     this.redrawCanvas();
   }
 
   addAlt() {
-    const alt = new FlowControl(420, 250, '[Alt]');
+    const alt = new FlowControl(420, 250, 'Alt');
     this.objects.push(alt);
     this.redrawCanvas();
   }
 
   addRightArrow() {
     const rightArrow = new Arrow(100, 220, 'Mensaje', false);
+    this.objects.push(rightArrow);
+    this.redrawCanvas();
+  }
+
+  addLoopArrow() {
+    const loopArrow = new LoopArrow(100, 220, 'Mensaje');
+    this.objects.push(loopArrow);
+    this.redrawCanvas();
+  }
+
+  addRightSyncArrow() {
+    const rightArrow = new Arrow(100, 220, 'Mensaje', false, true);
     this.objects.push(rightArrow);
     this.redrawCanvas();
   }
@@ -295,7 +323,7 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
       // Procede solo si NO se está interactuando con una línea de vida
       this.checkForOtherInteractions(mouseX, mouseY, event);
     }
-    
+
     this.saveProjectState();
   }
 
@@ -314,7 +342,7 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
     } else if (this.resizingLifeline) {
       this.performLifelineResizing(mouseY);
     }
-    
+
     this.saveProjectState();
   }
 
@@ -336,7 +364,24 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
       this.checkForDeleteObject(mouseX, mouseY);
       this.saveProjectState();
     }
-    
+  }
+
+  @HostListener('dblclick', ['$event'])
+  editText(event: MouseEvent): void {
+    const rect = this.canvasRef.nativeElement.getBoundingClientRect();
+    const mouseX = event.clientX - rect.left;
+    const mouseY = event.clientY - rect.top;
+
+    this.selectedObject = this.getObjectAtPosition(mouseX, mouseY);
+    if (
+      this.selectedObject &&
+      (this.selectedObject instanceof Actor ||
+        this.selectedObject instanceof Entity ||
+        this.selectedObject instanceof Arrow)
+    ) {
+      this.inputName(this.selectedObject, true);
+      this.saveProjectState();
+    }
   }
 
   private checkForLifelineResizeControl(mouseX: number, mouseY: number): void {
@@ -387,7 +432,14 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
   private performLifelineResizing(mouseY: number): void {
     if (this.resizingLifeline) {
       const newLength = mouseY - this.resizingLifeline.y;
-      this.resizingLifeline.resize(newLength);
+
+      this.objects.forEach((obj) => {
+        if (obj instanceof Actor || obj instanceof Entity) {
+          obj.lifeline.resize(newLength);
+        }
+      });
+
+      // this.resizingLifeline.resize(newLength);
       this.redrawCanvas();
     }
   }
@@ -461,5 +513,43 @@ export class GrapherPageComponent implements OnInit, OnDestroy, AfterViewInit {
     this.canvasRef.nativeElement.style.cursor = 'default';
   }
 
+  saveAsImage() {
+    const canvas = this.canvasRef.nativeElement;
+    const temporalCanvas = document.createElement('canvas');
+    const ctx = temporalCanvas.getContext('2d');
+
+    temporalCanvas.width = canvas.width;
+    temporalCanvas.height = canvas.height;
+
+    // Establecer un fondo blanco en el canvas temporal
+    ctx!.fillStyle = 'white';
+    ctx!.fillRect(0, 0, temporalCanvas.width, temporalCanvas.height);
+
+    // Copiar el contenido del canvas original al canvas temporal
+    ctx!.drawImage(canvas, 0, 0);
+
+    // Obtener la URL de la imagen del canvas temporal
+    this.imagenURL = temporalCanvas.toDataURL('image/png');
+
+    // Crear un enlace temporal para descargar la imagen
+    // const link = document.createElement('a');
+    // console.log(link);
+    // link.href = this.imagenURL;
+    // link.download = 'mi_diagrama.png';
+    // link.click();
+  }
   
+  guardarComoPDF() {
+    const canvas = this.canvasRef.nativeElement;
+    const pdf = new jspdf.jsPDF('l', 'px', [canvas.width, canvas.height]);
+
+    // Obtener la imagen del canvas como formato de datos
+    const imagenData = canvas.toDataURL('image/png');
+
+    // Agregar la imagen al PDF
+    pdf.addImage(imagenData, 'PNG', 0, 0, canvas.width, canvas.height);
+
+    // Guardar el PDF
+    pdf.save('mi_dibujo.pdf');
+  }
 }
